@@ -6,7 +6,7 @@ public class EnemySpawner : MonoBehaviour
 {
     [Header("Spawner Ayarları")]
     public Transform playerTarget;
-    public float baseSPS = 1f; // Saniyede doğan temel düşman sayısı
+    public float baseSPS = 2.5f; // Saniyede doğan temel düşman sayısı (Horda hissi için 1'den 2.5'e çıkarıldı)
     public float spawnRadius = 25f;
     
     [Header("FPS Koruması")]
@@ -86,7 +86,7 @@ public class EnemySpawner : MonoBehaviour
         }
 
         // Anlık SPS (Saniyede doğan düşman) hesaplaması (Level yerine Wave kullanıyoruz)
-        float sps = baseSPS * Mathf.Pow(1.10f, CurrentWave);
+        float sps = baseSPS * Mathf.Pow(1.15f, CurrentWave);
         
         // Lanet (Curse) çarpanını uygula (Daha fazla ve hızlı düşman)
         if (PlayerPassives.Instance != null)

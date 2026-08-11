@@ -84,14 +84,18 @@ public class PlayerHealth : MonoBehaviour
 
     void Die()
     {
-        Debug.Log("Sylva Öldü! Şimdilik oyunu kapatıyoruz...");
+        Debug.Log("Sylva Öldü! Toplanan tohumlar kaydedilip Base'e dönülüyor...");
         
-        // Editörde çalışıyorsa Play modundan çık, telefonda/PC'de build edilmişse uygulamayı kapat
-#if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
-#else
-        Application.Quit();
-#endif
+        // GameManager varsa run'ı bitir ve base'e dön
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.LoadBaseScene();
+        }
+        else
+        {
+            // Fallback: Test sırasında GameManager yoksa
+            UnityEngine.SceneManagement.SceneManager.LoadScene("BaseScene");
+        }
     }
 
     // YETENEK SİSTEMİ: Max canı artırır ve mevcut cana da ekler

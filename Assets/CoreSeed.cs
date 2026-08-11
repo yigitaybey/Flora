@@ -45,18 +45,26 @@ public class CoreSeed : MonoBehaviour
         }
     }
 
+    // GameManager olmadan test yaparken kullanılacak geçici sayaç
+    public static int fallbackRunCount = 0;
+
     void Collect()
     {
-        // PlayerPrefs'e kaydet
-        int currentCores = PlayerPrefs.GetInt("CoreSeedCount", 0);
-        PlayerPrefs.SetInt("CoreSeedCount", currentCores + 1);
-        PlayerPrefs.Save();
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.AddCoreSeed(1);
+        }
+        else
+        {
+            // GameManager yoksa (Test sahneleri için) statik sayacı kullan
+            fallbackRunCount += 1;
+        }
         
         // UI'a haber ver
         OnCoreSeedCollected?.Invoke();
 
         // Konsola bilgi yazdır
-        Debug.Log("Core Seed Toplandı! Toplam Core Seed: " + PlayerPrefs.GetInt("CoreSeedCount"));
+        Debug.Log("Core Seed Toplandı!");
 
         // Havuza geri gönder
         gameObject.SetActive(false);

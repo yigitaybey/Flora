@@ -23,13 +23,14 @@ public class Enemy : MonoBehaviour
     private NavMeshAgent agent;
 
     [Header("Düşman Ayarları")]
-    public float baseMaxHealth = 50f; // Başlangıç canı, level ile artacak
+    public float baseMaxHealth = 25f; // Başlangıç canı, level ile artacak (50'den 25'e düşürüldü)
     private float currentMaxHealth; // O anki levela göre hesaplanmış max can
     private float currentHealth;
 
     [Header("Sabit Statlar (Level İle Artmaz)")]
-    public float moveSpeed = 3.5f; // Hız sabit
-    public float damage = 10f; // Hasar sabit
+    public float moveSpeed = 3.2f; // Hız (3.5'ten 3.2'ye düşürüldü)
+    public float baseDamage = 8f; // Temel Hasar (10'dan 8'e düşürüldü)
+    private float currentDamage; // Hasar da artık Wave ile artacak
     public float attackRange = 1.5f;
     public float attackCooldown = 1f;
 
@@ -86,6 +87,10 @@ public class Enemy : MonoBehaviour
         }
 
         currentHealth = currentMaxHealth; // Doğduğunda canı fulle
+        
+        // Hasarı da wave'e göre artır (Her wave %5 daha fazla hasar)
+        currentDamage = baseDamage * (1f + (currentWave * 0.05f));
+        if (isElite) currentDamage *= 1.5f; // Elite'ler daha çok vurur
         
         playerTarget = target;
         playerHealth = target.GetComponent<PlayerHealth>();
@@ -165,7 +170,7 @@ public class Enemy : MonoBehaviour
                     if (sqrDistance <= (3.0f * 3.0f))
                     {
                         // Melee attack
-                        if (playerHealth != null) playerHealth.TakeDamage(damage * 1.5f); // Yakın vuruşu sert olsun
+                        if (playerHealth != null) playerHealth.TakeDamage(currentDamage * 1.5f); // Yakın vuruşu sert olsun
                         lastAttackTime = Time.time;
                     }
                     else
@@ -200,7 +205,7 @@ public class Enemy : MonoBehaviour
         if (playerHealth != null)
         {
             // Direkt oyuncuya hasar ver (Alan hasarı için ilerde OverlapSphere konabilir)
-            playerHealth.TakeDamage(damage);
+            playerHealth.TakeDamage(currentDamage);
         }
         
         // Kendini yok et (Tohum/XP bırakması için Die çağrılır)
@@ -217,7 +222,11 @@ public class Enemy : MonoBehaviour
             case EnemyType.Moss:
             case EnemyType.Wolfey:
                 // Yakın dövüş hasarı
-                playerHealth.TakeDamage(damage);
+                float distance = Vector3.Distance(transform.position, playerTarget.position);
+                if (distance < 2.5f) 
+                {
+                    playerHealth.TakeDamage(currentDamage);
+                }
                 break;
 
             case EnemyType.Iyv:
@@ -236,7 +245,7 @@ public class Enemy : MonoBehaviour
             EnemyProjectile proj = projObj.GetComponent<EnemyProjectile>();
             if (proj != null)
             {
-                proj.Fire(playerTarget, 10f, damage);
+                proj.Fire(playerTarget, 10f, currentDamage);
             }
         }
     }

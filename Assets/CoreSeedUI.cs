@@ -8,6 +8,9 @@ public class CoreSeedUI : MonoBehaviour
 
     void Start()
     {
+        // Editor'de test ederken GameManager yoksa eski değer kalmasın diye sıfırlıyoruz
+        CoreSeed.fallbackRunCount = 0;
+
         // Başlangıçta UI'ı güncelle
         UpdateUI();
         
@@ -25,9 +28,19 @@ public class CoreSeedUI : MonoBehaviour
     {
         if (coreSeedText != null)
         {
-            // PlayerPrefs'ten oku ve Text'e yaz
-            int count = PlayerPrefs.GetInt("CoreSeedCount", 0);
-            coreSeedText.text = count.ToString();
+            // GameManager varsa ondan oku (Savaşta sadece bu run'da toplananı göster)
+            int count = 0;
+            if (GameManager.Instance != null)
+            {
+                count = GameManager.Instance.currentRunCoreSeedCount;
+            }
+            else
+            {
+                // Fallback (Direkt CombatScene'den test ediliyorsa)
+                count = CoreSeed.fallbackRunCount;
+            }
+            
+            coreSeedText.text = "Tohum: " + count.ToString();
         }
     }
 }

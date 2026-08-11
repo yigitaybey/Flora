@@ -10,6 +10,9 @@ public class GameManager : MonoBehaviour
     public int towerCoreCount = 0; // Boss'tan düşen Kule Çekirdeği
     public int radioTowerLevel = 1; // Kule Seviyesi
 
+    [Header("Savaş (Run) Değerleri")]
+    public int currentRunCoreSeedCount = 0;
+
     void Awake()
     {
         // Singleton Pattern (Sahneler arası silinmez)
@@ -28,19 +31,35 @@ public class GameManager : MonoBehaviour
     // --- SAHNE GEÇİŞLERİ ---
     public void LoadCombatScene()
     {
+        currentRunCoreSeedCount = 0; // Savaş başlarken tohumları sıfırla
         SceneManager.LoadScene("CombatScene");
     }
 
     public void LoadBaseScene()
     {
+        // Base'e dönerken run'da kazanılanları asıl hesaba ekle
+        if (currentRunCoreSeedCount > 0)
+        {
+            coreSeedCount += currentRunCoreSeedCount;
+            currentRunCoreSeedCount = 0;
+            SaveData();
+        }
         SceneManager.LoadScene("BaseScene");
     }
 
     // --- KAYIT SİSTEMİ (SAVE/LOAD) ---
     public void AddCoreSeed(int amount)
     {
-        coreSeedCount += amount;
-        SaveData();
+        // Eğer savaştaysak sadece o run'ın hanesine ekle, değilse asıl bakiyeye
+        if (SceneManager.GetActiveScene().name == "CombatScene")
+        {
+            currentRunCoreSeedCount += amount;
+        }
+        else
+        {
+            coreSeedCount += amount;
+            SaveData();
+        }
     }
 
     public void AddTowerCore(int amount)

@@ -60,7 +60,7 @@ public class ExperienceManager : MonoBehaviour
     {
         currentLevel++;
         currentXP -= requiredXP; // Kalan (artan) XP'yi silme, bir sonraki levele aktar
-        requiredXP = 100f + (currentLevel * 20f); // Kademeli artış (Vampire Survivors mantığı)
+        requiredXP = 100f + (currentLevel * 30f); // Düşman sayısı çok arttığı için XP eğrisi dengelendi
         
         Debug.Log("LEVEL ATLADIN! Yeni Level: " + currentLevel);
         
