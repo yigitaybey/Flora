@@ -23,8 +23,8 @@ public class BaseCameraPan : MonoBehaviour
         cam = GetComponent<Camera>();
         startPos = transform.position; // Kameranın başlangıç konumunu kaydet
         
-        // Sadece X rotasyonunu 45 yap, pozisyonu elleme (Unity Inspector'daki kalır)
-        transform.rotation = Quaternion.Euler(45, transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z);
+        // Sadece X rotasyonunu 24.3 yap, pozisyonu elleme (Unity Inspector'daki kalır)
+        transform.rotation = Quaternion.Euler(24.3f, transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z);
     }
 
     void Update()
