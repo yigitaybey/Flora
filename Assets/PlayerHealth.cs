@@ -62,8 +62,12 @@ public class PlayerHealth : MonoBehaviour
         }
     }
 
+    private bool isDead = false;
+
     public void TakeDamage(float amount)
     {
+        if (isDead) return;
+
         // Eğer son hasar alma zamanının üzerinden yeterli süre geçmediyse hasarı yok say (I-Frames)
         if (Time.time < lastDamageTime + invincibilityDuration)
         {
@@ -84,6 +88,7 @@ public class PlayerHealth : MonoBehaviour
 
     void Die()
     {
+        isDead = true;
         Debug.Log("Sylva Öldü! Toplanan tohumlar kaydedilip Base'e dönülüyor...");
         
         // GameManager varsa run'ı bitir ve base'e dön

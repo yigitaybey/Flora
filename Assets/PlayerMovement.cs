@@ -6,6 +6,10 @@ public class PlayerMovement : MonoBehaviour
     public float moveSpeed = 5f;
     private Camera mainCamera;
 
+    [Header("Animasyon ve Görsel")]
+    public Animator animator;
+    public Transform characterModel;
+
     private FloatingJoystick joystick;
     public Vector3 lastMoveDirection { get; private set; } = Vector3.right; // Varsayılan olarak sağa baksın
 
@@ -56,6 +60,27 @@ public class PlayerMovement : MonoBehaviour
         if (movement.magnitude > 0.01f)
         {
             lastMoveDirection = movement.normalized;
+            
+            // Yürüme animasyonunu tetikle
+            if (animator != null)
+            {
+                animator.SetFloat("Speed", movement.magnitude);
+            }
+
+            // Modeli hareket yönüne doğru döndür (Sadece modeli döndürüyoruz ki silahlar bozulmasın)
+            if (characterModel != null)
+            {
+                Quaternion targetRotation = Quaternion.LookRotation(movement);
+                characterModel.rotation = Quaternion.Slerp(characterModel.rotation, targetRotation, 10f * Time.deltaTime);
+            }
+        }
+        else
+        {
+            // Durma animasyonuna geç
+            if (animator != null)
+            {
+                animator.SetFloat("Speed", 0f);
+            }
         }
 
         // Karakteri hareket ettiriyoruz

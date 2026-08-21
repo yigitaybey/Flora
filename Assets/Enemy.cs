@@ -21,6 +21,7 @@ public class Enemy : MonoBehaviour
     private Transform playerTarget;
     private PlayerHealth playerHealth;
     private NavMeshAgent agent;
+    private Vector3 initialScale;
 
     [Header("Düşman Ayarları")]
     public float baseMaxHealth = 25f; // Başlangıç canı, level ile artacak (50'den 25'e düşürüldü)
@@ -55,6 +56,8 @@ public class Enemy : MonoBehaviour
         agent.angularSpeed = 360f;
         defaultSpeed = moveSpeed;
         agent.speed = defaultSpeed; // Hız statik ve level ile artmıyor
+
+        initialScale = transform.localScale; // Editor'de ayarlanan boyutu kaydet
     }
 
     public void Spawn(Transform target, bool makeElite = false)
@@ -79,11 +82,11 @@ public class Enemy : MonoBehaviour
         if (isElite)
         {
             currentMaxHealth *= 2f;
-            transform.localScale = new Vector3(1.5f, 1.5f, 1.5f); // %50 daha büyük
+            transform.localScale = initialScale * 1.5f; // %50 daha büyük
         }
         else
         {
-            transform.localScale = Vector3.one;
+            transform.localScale = initialScale;
         }
 
         currentHealth = currentMaxHealth; // Doğduğunda canı fulle
