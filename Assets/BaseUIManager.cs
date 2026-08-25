@@ -8,6 +8,8 @@ public class BaseUIManager : MonoBehaviour
     [Header("Paneller")]
     public GameObject worldMapPanel;
     public GameObject workshopPanel;
+    public GameObject settingsPanel;
+    public GameObject storePanel; // RevenueCat Ağaç Dikme Mağazası
 
     [Header("Her Zaman Görünen Yazılar (Tepe)")]
     public TextMeshProUGUI txtCoreCount; // Kule Çekirdeği Sayısı
@@ -43,6 +45,8 @@ public class BaseUIManager : MonoBehaviour
     {
         if (worldMapPanel != null) worldMapPanel.SetActive(false);
         if (workshopPanel != null) workshopPanel.SetActive(false);
+        if (settingsPanel != null) settingsPanel.SetActive(false);
+        if (storePanel != null) storePanel.SetActive(false);
     }
 
     // --- KAYNAKLARI GÜNCELLEME ---
@@ -79,17 +83,122 @@ public class BaseUIManager : MonoBehaviour
     // Atölyedeki "Hasar Yükselt" (Örnek) butonuna basınca çalışır
     public void ClickUpgradeDamage()
     {
-        // 10 Tohum harcama testi (Örnek)
         if (GameManager.Instance != null && GameManager.Instance.coreSeedCount >= 10)
         {
             GameManager.Instance.coreSeedCount -= 10;
-            // TODO: MetaUpgradeManager.Instance.UpgradeDamage();
             UpdateCurrencyUI();
             Debug.Log("Hasar Yükseltildi!");
         }
         else
         {
             Debug.Log("Yeterli Tohum Yok!");
+        }
+    }
+
+    // Atölyedeki "Max Can Yükselt" butonuna basınca çalışır
+    public void ClickUpgradeHealth()
+    {
+        if (GameManager.Instance != null && GameManager.Instance.coreSeedCount >= 10)
+        {
+            GameManager.Instance.coreSeedCount -= 10;
+            UpdateCurrencyUI();
+            Debug.Log("Max Can Yükseltildi!");
+        }
+        else
+        {
+            Debug.Log("Yeterli Tohum Yok!");
+        }
+    }
+
+    // Ayarlar butonuna basınca çalışır
+    public void OpenSettings()
+    {
+        CloseAllPanels();
+        if (settingsPanel != null) settingsPanel.SetActive(true);
+        Debug.Log("Ayarlar Menüsü Açıldı!");
+    }
+
+    // Tohumun yanındaki '+' butonuna basınca çalışır (RevenueCat mağazası)
+    public void OpenStore()
+    {
+        CloseAllPanels();
+        if (storePanel != null) storePanel.SetActive(true);
+        Debug.Log("Ağaç Dikme / Mağaza Menüsü Açıldı! (RevenueCat bağlanacak)");
+    }
+
+    // --- REVENUECAT MAĞAZA (TEST İÇİN SAHTE SATIN ALIMLAR) ---
+
+    public void BuyPackage1()
+    {
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.AddCoreSeed(5000);
+            UpdateCurrencyUI();
+            Debug.Log("5000 Tohum Satın Alındı! (API Bağlanana Kadar Test)");
+        }
+    }
+
+    public void BuyPackage2()
+    {
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.AddCoreSeed(7000);
+            GameManager.Instance.donationTreesCount += 1;
+            GameManager.Instance.SaveData();
+            UpdateCurrencyUI();
+            Debug.Log("7000 Tohum ve 1 Ağaç Dikildi! Toplam Ağaç: " + GameManager.Instance.donationTreesCount);
+        }
+    }
+
+    public void BuyPackage3()
+    {
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.AddCoreSeed(10000);
+            GameManager.Instance.donationTreesCount += 2;
+            GameManager.Instance.SaveData();
+            UpdateCurrencyUI();
+            Debug.Log("10000 Tohum ve 2 Ağaç Dikildi! Toplam Ağaç: " + GameManager.Instance.donationTreesCount);
+        }
+    }
+
+    // --- AYARLAR (UI SLIDER VE TOGGLE) BAĞLANTILARI ---
+    
+    public void OnSoundVolumeChanged(float value)
+    {
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.soundVolume = value;
+            GameManager.Instance.SaveSettings();
+        }
+    }
+
+    public void OnMusicVolumeChanged(float value)
+    {
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.musicVolume = value;
+            GameManager.Instance.SaveSettings();
+        }
+    }
+
+    public void OnScreenShakeToggled(bool value)
+    {
+        Debug.Log("Ekran Titremesi (ScreenShake) UI'dan gelen değer: " + value);
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.isScreenShakeEnabled = value;
+            GameManager.Instance.SaveSettings();
+        }
+    }
+
+    public void OnDamageNumToggled(bool value)
+    {
+        Debug.Log("Hasar Yazıları (DamageNum) UI'dan gelen değer: " + value);
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.isDamageNumEnabled = value;
+            GameManager.Instance.SaveSettings();
         }
     }
 }

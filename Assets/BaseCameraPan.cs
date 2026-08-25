@@ -83,7 +83,17 @@ public class BaseCameraPan : MonoBehaviour
         {
             Vector3 pos = cam.ScreenToViewportPoint(currentScreenPos) - dragOrigin;
             
-            Vector3 move = new Vector3(-pos.x * panSpeed, 0, -pos.y * panSpeed);
+            // YENİ: Kameranın açısına (Y rotasyonuna) göre kaydırma (Çapraz/İzometrik destekli)
+            Vector3 forward = transform.forward;
+            forward.y = 0;
+            forward.Normalize();
+
+            Vector3 right = transform.right;
+            right.y = 0;
+            right.Normalize();
+
+            // Fare hareketini dünya yönlerine uyarla
+            Vector3 move = (right * -pos.x * panSpeed) + (forward * -pos.y * panSpeed);
             Vector3 newPos = transform.position + move;
             
             // Kameranın harita dışına uçmasını engelle (Oyun başındaki konumu referans alarak)
@@ -108,15 +118,14 @@ public class BaseCameraPan : MonoBehaviour
         // 1. MOUSE TEKERLEĞİ (SCROLL)
         if (Mouse.current != null)
         {
+            // Tekerlek değerini normalize edelim (-1, 0, 1) ki fare çok hızlı çevrildiğinde kamera fırlamasın
             float scroll = Mouse.current.scroll.ReadValue().y;
-            if (Mathf.Abs(scroll) > 0.01f)
-            {
-                zoomDelta = scroll * zoomSpeedMouse * Time.deltaTime;
-            }
+            if (scroll > 0.1f) zoomDelta = zoomSpeedMouse * Time.deltaTime;
+            else if (scroll < -0.1f) zoomDelta = -zoomSpeedMouse * Time.deltaTime;
         }
 
         // 2. MOBİL ÇİFT PARMAK (PINCH)
-        if (Touchscreen.current != null)
+        if (Touchscreen.current != null && Touchscreen.current.touches.Count >= 2)
         {
             var t0 = Touchscreen.current.touches[0];
             var t1 = Touchscreen.current.touches[1];
@@ -131,20 +140,45 @@ public class BaseCameraPan : MonoBehaviour
                 float prevMag = (t0Prev - t1Prev).magnitude;
                 float currentMag = (t0Pos - t1Pos).magnitude;
 
-                // Parmaklar açılıyorsa pozitif (zoom in), kapanıyorsa negatif (zoom out)
                 zoomDelta = (currentMag - prevMag) * zoomSpeedTouch * Time.deltaTime;
             }
         }
 
-        // ZOOM UYGULAMA (Kameranın baktığı yöne doğru ilerlemesi)
+        // ZOOM UYGULAMA
         if (Mathf.Abs(zoomDelta) > 0.01f)
         {
-            Vector3 targetPos = transform.position + (transform.forward * zoomDelta);
-            
-            // Yüksekliğe göre sınırlandır (Limitleri aşmasın)
-            if (targetPos.y > zoomLimit.x && targetPos.y < zoomLimit.y)
+            if (cam.orthographic)
             {
+                // İZOMETRİK (Orthographic) ZOOM:
+                cam.orthographicSize -= zoomDelta;
+                // Orthographic için Inspector'daki zoomLimit değerlerini (örn: 10 ile 80 arası) kullanabilirsin.
+                cam.orthographicSize = Mathf.Clamp(cam.orthographicSize, zoomLimit.x / 10f, zoomLimit.y / 10f); 
+            }
+            else
+            {
+                // PERSPEKTİF ZOOM: Fiziksel olarak kamerayı ileri/geri götürür.
+                Vector3 targetPos = transform.position + (transform.forward * zoomDelta);
+                
+                // Yüksekliği (Y ekseni) tam olarak sınırlara (zoomLimit) dayamak için matematiksel hesap:
+                if (targetPos.y < zoomLimit.x)
+                {
+                    float diffY = zoomLimit.x - transform.position.y;
+                    targetPos = transform.position + (transform.forward * (diffY / transform.forward.y));
+                }
+                else if (targetPos.y > zoomLimit.y)
+                {
+                    float diffY = zoomLimit.y - transform.position.y;
+                    targetPos = transform.position + (transform.forward * (diffY / transform.forward.y));
+                }
+
+                Vector3 diff = targetPos - transform.position;
                 transform.position = targetPos;
+                
+                // BUG FIX: Kaydırma merkezi (startPos) güncellemesi
+                // Eğer ileride kamerayı sağa/sola döndürürsek (Y rotasyonu) X ekseninde de ilerler,
+                // bu yüzden hem X hem Z merkezini güncellemeliyiz.
+                startPos.x += diff.x;
+                startPos.z += diff.z;
             }
         }
     }

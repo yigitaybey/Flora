@@ -281,7 +281,8 @@ public class Enemy : MonoBehaviour
 
         currentHealth -= amount;
         
-        if (DamagePopupPool.Instance != null)
+        // Ayarlardan Hasar yazıları açıksa popup çıkar
+        if ((GameManager.Instance == null || GameManager.Instance.isDamageNumEnabled) && DamagePopupPool.Instance != null)
         {
             GameObject popupObj = DamagePopupPool.Instance.GetPopup();
             if (popupObj != null)

@@ -47,6 +47,9 @@ public class PlayerHealth : MonoBehaviour
 
     void ShowHealPopup(float amount)
     {
+        // Ayarlardan Hasar/Can yazıları kapatılmışsa çıkarma
+        if (GameManager.Instance != null && !GameManager.Instance.isDamageNumEnabled) return;
+
         if (DamagePopupPool.Instance != null)
         {
             GameObject popupObj = DamagePopupPool.Instance.GetPopup();

@@ -9,9 +9,16 @@ public class GameManager : MonoBehaviour
     public int coreSeedCount = 0; // Para
     public int towerCoreCount = 0; // Boss'tan düşen Kule Çekirdeği
     public int radioTowerLevel = 1; // Kule Seviyesi
+    public int donationTreesCount = 0; // RevenueCat Bağış Ağaçları
 
     [Header("Savaş (Run) Değerleri")]
     public int currentRunCoreSeedCount = 0;
+
+    [Header("Ayarlar")]
+    public float soundVolume = 1f;
+    public float musicVolume = 1f;
+    public bool isScreenShakeEnabled = true;
+    public bool isDamageNumEnabled = true;
 
     void Awake()
     {
@@ -80,11 +87,21 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void SaveData()
+    public void SaveData()
     {
         PlayerPrefs.SetInt("CoreSeedCount", coreSeedCount);
         PlayerPrefs.SetInt("TowerCoreCount", towerCoreCount);
         PlayerPrefs.SetInt("RadioTowerLevel", radioTowerLevel);
+        PlayerPrefs.SetInt("DonationTreesCount", donationTreesCount);
+        SaveSettings(); // Kayıt alırken ayarları da kaydet
+    }
+
+    public void SaveSettings()
+    {
+        PlayerPrefs.SetFloat("SoundVolume", soundVolume);
+        PlayerPrefs.SetFloat("MusicVolume", musicVolume);
+        PlayerPrefs.SetInt("ScreenShake", isScreenShakeEnabled ? 1 : 0);
+        PlayerPrefs.SetInt("DamageNum", isDamageNumEnabled ? 1 : 0);
         PlayerPrefs.Save();
     }
 
@@ -93,5 +110,12 @@ public class GameManager : MonoBehaviour
         coreSeedCount = PlayerPrefs.GetInt("CoreSeedCount", 0);
         towerCoreCount = PlayerPrefs.GetInt("TowerCoreCount", 0);
         radioTowerLevel = PlayerPrefs.GetInt("RadioTowerLevel", 1);
+        donationTreesCount = PlayerPrefs.GetInt("DonationTreesCount", 0);
+        
+        // Ayarları yükle
+        soundVolume = PlayerPrefs.GetFloat("SoundVolume", 1f);
+        musicVolume = PlayerPrefs.GetFloat("MusicVolume", 1f);
+        isScreenShakeEnabled = PlayerPrefs.GetInt("ScreenShake", 1) == 1;
+        isDamageNumEnabled = PlayerPrefs.GetInt("DamageNum", 1) == 1;
     }
 }
