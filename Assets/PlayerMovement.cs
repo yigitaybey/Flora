@@ -28,10 +28,10 @@ public class PlayerMovement : MonoBehaviour
         // 1. Önce PC (Klavye) kontrolü (Senin test etmen için)
         if (Keyboard.current != null)
         {
-            if (Keyboard.current.wKey.isPressed) input += Vector3.forward;
-            if (Keyboard.current.sKey.isPressed) input += Vector3.back;
-            if (Keyboard.current.dKey.isPressed) input += Vector3.right;
-            if (Keyboard.current.aKey.isPressed) input += Vector3.left;
+            if (Keyboard.current.wKey.isPressed || Keyboard.current.upArrowKey.isPressed) input += Vector3.forward;
+            if (Keyboard.current.sKey.isPressed || Keyboard.current.downArrowKey.isPressed) input += Vector3.back;
+            if (Keyboard.current.dKey.isPressed || Keyboard.current.rightArrowKey.isPressed) input += Vector3.right;
+            if (Keyboard.current.aKey.isPressed || Keyboard.current.leftArrowKey.isPressed) input += Vector3.left;
         }
 
         // 2. Eğer ekranda Joystick kullanılıyorsa, klavye girdisini ez (Mobil için)

@@ -15,6 +15,12 @@ public class BaseUIManager : MonoBehaviour
     public TextMeshProUGUI txtCoreCount; // Kule Çekirdeği Sayısı
     public TextMeshProUGUI txtSeedCount; // Tohum Sayısı
 
+    [Header("Ayarlar UI Elemanları")]
+    public UnityEngine.UI.Slider soundSlider;
+    public UnityEngine.UI.Slider musicSlider;
+    public UnityEngine.UI.Toggle screenShakeToggle;
+    public UnityEngine.UI.Toggle damageNumToggle;
+
     void Awake()
     {
         if (Instance == null) Instance = this;
@@ -26,6 +32,18 @@ public class BaseUIManager : MonoBehaviour
         // Başlangıçta paneller kapalı olsun
         CloseAllPanels();
         UpdateCurrencyUI();
+        LoadSettingsUI();
+    }
+
+    public void LoadSettingsUI()
+    {
+        if (GameManager.Instance != null)
+        {
+            if (soundSlider != null) soundSlider.value = GameManager.Instance.soundVolume;
+            if (musicSlider != null) musicSlider.value = GameManager.Instance.musicVolume;
+            if (screenShakeToggle != null) screenShakeToggle.isOn = GameManager.Instance.isScreenShakeEnabled;
+            if (damageNumToggle != null) damageNumToggle.isOn = GameManager.Instance.isDamageNumEnabled;
+        }
     }
 
     // --- PANEL AÇMA/KAPAMA ---

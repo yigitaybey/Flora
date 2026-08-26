@@ -48,7 +48,11 @@ public class PlayerHealth : MonoBehaviour
     void ShowHealPopup(float amount)
     {
         // Ayarlardan Hasar/Can yazıları kapatılmışsa çıkarma
-        if (GameManager.Instance != null && !GameManager.Instance.isDamageNumEnabled) return;
+        bool showPopup = true;
+        if (GameManager.Instance != null) showPopup = GameManager.Instance.isDamageNumEnabled;
+        else if (CombatUIManager.Instance != null) showPopup = CombatUIManager.fallbackDamageNumEnabled;
+
+        if (!showPopup) return;
 
         if (DamagePopupPool.Instance != null)
         {
@@ -79,6 +83,10 @@ public class PlayerHealth : MonoBehaviour
 
         lastDamageTime = Time.time; // Hasar aldığımız anı kaydet
         currentHealth -= amount;
+        
+        // Canın sıfırın altına düşmesini (eksi değerleri) engelle
+        if (currentHealth < 0) currentHealth = 0;
+
         Debug.Log("Sylva Hasar Aldı! Kalan Can: " + currentHealth);
 
         UpdateUI();
@@ -92,17 +100,18 @@ public class PlayerHealth : MonoBehaviour
     void Die()
     {
         isDead = true;
-        Debug.Log("Sylva Öldü! Toplanan tohumlar kaydedilip Base'e dönülüyor...");
+        Debug.Log("Sylva Öldü! Ölüm ekranı açılıyor...");
         
-        // GameManager varsa run'ı bitir ve base'e dön
-        if (GameManager.Instance != null)
+        // Yeni UI sistemimizdeki ölüm ekranını çağır
+        if (CombatUIManager.Instance != null)
         {
-            GameManager.Instance.LoadBaseScene();
+            CombatUIManager.Instance.ShowDeathScreen();
         }
         else
         {
-            // Fallback: Test sırasında GameManager yoksa
-            UnityEngine.SceneManagement.SceneManager.LoadScene("BaseScene");
+            // Eğer sahneye UIManager koymayı unuttuysan diye eski sistem fallback
+            if (GameManager.Instance != null)
+                GameManager.Instance.LoadBaseScene();
         }
     }
 
