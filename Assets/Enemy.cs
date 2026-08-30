@@ -23,8 +23,10 @@ public class Enemy : MonoBehaviour
     private NavMeshAgent agent;
     private Vector3 initialScale;
 
-    [Header("Düşman Ayarları")]
-    public float baseMaxHealth = 25f; // Başlangıç canı, level ile artacak (50'den 25'e düşürüldü)
+    [Header("Düşman ve Boss Can Ayarları")]
+    public float baseMaxHealth = 25f; // Normal düşman başlangıç canı
+    public float bossBaseHealth = 500f; // Boss (Chinar) canı (İstediğin sayıyı yazabilirsin!)
+    public bool useFixedBossHealth = true; // True ise direkt yukarıdaki sayıyı alır (Testlerde kolay kesmek için)
     private float currentMaxHealth; // O anki levela göre hesaplanmış max can
     private float currentHealth;
 
@@ -49,6 +51,9 @@ public class Enemy : MonoBehaviour
     [Header("Ödül Ayarları")]
     public float coreSeedDropChance = 5f; // Yüzde 5 ihtimalle Core Seed düşürsün
 
+    [Header("Animasyon")]
+    public Animator animator;
+
     void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
@@ -58,6 +63,7 @@ public class Enemy : MonoBehaviour
         agent.speed = defaultSpeed; // Hız statik ve level ile artmıyor
 
         initialScale = transform.localScale; // Editor'de ayarlanan boyutu kaydet
+        if (animator == null) animator = GetComponentInChildren<Animator>();
     }
 
     public void Spawn(Transform target, bool makeElite = false)
@@ -68,10 +74,10 @@ public class Enemy : MonoBehaviour
         // Düşman canını artık oyuncunun Level'ına değil, bulunulan Dalga (Wave) sayısına göre artırıyoruz
         int currentWave = EnemySpawner.CurrentWave;
         
-        // Boss için özel devasa can havuzu
+        // Boss için özel can havuzu (Test için sabit veya katlamalı)
         if (enemyType == EnemyType.Chinar)
         {
-            currentMaxHealth = 2000f * Mathf.Pow(1.15f, currentWave);
+            currentMaxHealth = useFixedBossHealth ? bossBaseHealth : (bossBaseHealth * Mathf.Pow(1.15f, currentWave));
         }
         else
         {
@@ -201,6 +207,13 @@ public class Enemy : MonoBehaviour
                 TakeDamage(burnDamagePerSecond);
             }
         }
+
+        // --- ANİMATÖR HAREKET GÜNCELLEMESİ ---
+        if (animator != null && agent != null)
+        {
+            float speed = agent.velocity.magnitude;
+            animator.SetFloat("Speed", speed);
+        }
     }
 
     void Explode()
@@ -219,6 +232,11 @@ public class Enemy : MonoBehaviour
     {
         lastAttackTime = Time.time;
         if (playerHealth == null) return;
+
+        if (animator != null)
+        {
+            animator.SetTrigger("Attack");
+        }
 
         switch (enemyType)
         {
@@ -380,5 +398,15 @@ public class Enemy : MonoBehaviour
         // 5. Düşmanı yok etme (Object Pooling - Havuza Geri Gönder)
         agent.enabled = false;
         gameObject.SetActive(false);
+
+        // 6. BOSS (CHINAR) ÖLDÜYSE KAZANDIN EKRANINI AÇ!
+        if (enemyType == EnemyType.Chinar)
+        {
+            Debug.Log("🎉 CHINAR (BOSS) YENİLDİ! KAZANDIN EKRANI AÇILIYOR...");
+            if (CombatUIManager.Instance != null)
+            {
+                CombatUIManager.Instance.TriggerVictory(1.5f); // 1.5 saniye sonra ekran açılır
+            }
+        }
     }
 }

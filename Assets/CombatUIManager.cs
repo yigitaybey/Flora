@@ -100,6 +100,11 @@ public class CombatUIManager : MonoBehaviour
         Time.timeScale = 0f;
     }
 
+    public void TriggerVictory(float delay = 1.5f)
+    {
+        Invoke(nameof(ShowWinScreen), delay);
+    }
+
     public void ShowWinScreen()
     {
         // GameManager'dan toplanan seed'i al (Eğer sahneyi direkt başlattıysan fallback kullan)

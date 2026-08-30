@@ -12,6 +12,10 @@ public class EnemySpawner : MonoBehaviour
     [Header("FPS Koruması")]
     public int maxEnemiesOnScreen = 200; // Ekranda aynı anda en fazla kaç düşman olabilir
 
+    [Header("Debug & Test Zaman Kontrolleri")]
+    [Tooltip("Oyun hız çarpanı (1 = Normal, 2 = 2x Hızlı, 5 = 5x Hızlı)")]
+    [Range(0.5f, 10f)] public float gameSpeedMultiplier = 1f;
+
     // UI (Ekran) üzerinden okuyabilmek için public static yaptık
     public static float GameTimer { get; private set; } = 0f;
     
@@ -31,10 +35,11 @@ public class EnemySpawner : MonoBehaviour
         CurrentWave = 1;
         lastSpawnedEliteWave = 0;
         bossSpawned = false;
+        Time.timeScale = gameSpeedMultiplier;
     }
 
     // Sahadaki tüm normal düşmanları temizler (Boss savaşı öncesi)
-    void ClearAllEnemies()
+    public void ClearAllEnemies()
     {
         if (EnemyPool.Instance == null) return;
         
@@ -49,8 +54,59 @@ public class EnemySpawner : MonoBehaviour
         }
     }
 
+    // --- TEST / DEBUG KISAYOLLARI ---
+    void CheckDebugInputs()
+    {
+        if (UnityEngine.InputSystem.Keyboard.current != null)
+        {
+            // 'B' Tuşu: Direkt BOSS Dalgasına (Wave 20 - 580. saniyeye) Atla!
+            if (UnityEngine.InputSystem.Keyboard.current.bKey.wasPressedThisFrame)
+            {
+                JumpToBoss();
+            }
+
+            // 'T' Tuşu: Süreyi +60 saniye (2 Dalga) İleri Sar
+            if (UnityEngine.InputSystem.Keyboard.current.tKey.wasPressedThisFrame)
+            {
+                AddSeconds(60f);
+            }
+
+            // '1', '2', '5' Tuşları: Oyun Hızını Değiştir (1x, 2x, 5x Hızlı Oyna)
+            if (UnityEngine.InputSystem.Keyboard.current.digit1Key.wasPressedThisFrame) SetGameSpeed(1f);
+            if (UnityEngine.InputSystem.Keyboard.current.digit2Key.wasPressedThisFrame) SetGameSpeed(2f);
+            if (UnityEngine.InputSystem.Keyboard.current.digit5Key.wasPressedThisFrame) SetGameSpeed(5f);
+        }
+    }
+
+    public void JumpToBoss()
+    {
+        GameTimer = 580f; // 19.33 dakika civarı -> Wave 20
+        Debug.Log("⏩ DEBUG: Direkt Wave 20 (BOSS CHINAR) Dalgasına Atlandı!");
+    }
+
+    public void AddSeconds(float seconds)
+    {
+        GameTimer += seconds;
+        Debug.Log($"⏩ DEBUG: Süre +{seconds}sn ileri sarıldı. Yeni Süre: {GameTimer:F0}sn | Wave: {CurrentWave}");
+    }
+
+    public void SetGameSpeed(float speed)
+    {
+        gameSpeedMultiplier = speed;
+        Time.timeScale = speed;
+        Debug.Log($"⚡ DEBUG: Oyun Hızı {speed}x yapıldı!");
+    }
+
     void Update()
     {
+        CheckDebugInputs();
+
+        // Inspector'dan hız değiştirildiyse uygula
+        if (Time.timeScale != 0f && Time.timeScale != gameSpeedMultiplier)
+        {
+            Time.timeScale = gameSpeedMultiplier;
+        }
+
         if (playerTarget == null) return;
 
         // Oyun süresini say (Her 30 saniye = 1 Dalga/Wave)
