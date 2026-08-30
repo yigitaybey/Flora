@@ -15,6 +15,11 @@ public class CameraFollow : MonoBehaviour
     private Camera cam;
     private float baseOrthographicSize;
 
+    [Header("Kamera Sınırları (Boşluğu Görmeme Koruması)")]
+    public bool useCameraBounds = false; // İsterse açıp kapatabilir
+    public Vector2 minCameraBounds = new Vector2(-30f, -30f); // X ve Z için minimum sınır
+    public Vector2 maxCameraBounds = new Vector2(30f, 30f);   // X ve Z için maksimum sınır
+
     void Awake()
     {
         cam = GetComponent<Camera>();
@@ -40,6 +45,8 @@ public class CameraFollow : MonoBehaviour
         float t = (currentLevel - 1f) / 19f;
         float targetZoomMultiplier = Mathf.Lerp(1.0f, maxZoomOutMultiplier, t);
 
+        Vector3 desiredPosition;
+
         if (cam != null && cam.orthographic)
         {
             // İZOMETRİK (Orthographic) Kamera için uzaklaşma işlemi "Size" büyütülerek yapılır
@@ -47,15 +54,32 @@ public class CameraFollow : MonoBehaviour
             cam.orthographicSize = Mathf.Lerp(cam.orthographicSize, targetSize, smoothSpeed * Time.deltaTime);
 
             // Kameranın konumu her zaman sabit offset'te kalabilir
-            Vector3 desiredPosition = target.position + baseOffset;
-            transform.position = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed * Time.deltaTime);
+            desiredPosition = target.position + baseOffset;
         }
         else
         {
             // 3D PERSPEKTİF Kamera kullanılıyorsa, kamerayı fiziksel olarak karakterden uzaklaştır
             Vector3 targetOffset = baseOffset * targetZoomMultiplier;
-            Vector3 desiredPosition = target.position + targetOffset;
-            transform.position = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed * Time.deltaTime);
+            desiredPosition = target.position + targetOffset;
         }
+
+        // İsteğe bağlı kamera sınırlandırması (Kameranın kendisinin de dışarı kaymasını engeller)
+        if (useCameraBounds)
+        {
+            desiredPosition.x = Mathf.Clamp(desiredPosition.x, minCameraBounds.x, maxCameraBounds.x);
+            desiredPosition.z = Mathf.Clamp(desiredPosition.z, minCameraBounds.y, maxCameraBounds.y);
+        }
+
+        transform.position = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed * Time.deltaTime);
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        if (!useCameraBounds) return;
+
+        Gizmos.color = Color.cyan;
+        Vector3 center = new Vector3((minCameraBounds.x + maxCameraBounds.x) * 0.5f, transform.position.y, (minCameraBounds.y + maxCameraBounds.y) * 0.5f);
+        Vector3 size = new Vector3(Mathf.Abs(maxCameraBounds.x - minCameraBounds.x), 2f, Mathf.Abs(maxCameraBounds.y - minCameraBounds.y));
+        Gizmos.DrawWireCube(center, size);
     }
 }

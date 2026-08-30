@@ -13,12 +13,29 @@ public class PlayerMovement : MonoBehaviour
     private FloatingJoystick joystick;
     public Vector3 lastMoveDirection { get; private set; } = Vector3.right; // Varsayılan olarak sağa baksın
 
+    public enum BoundaryType { Circle, NavMesh, Rectangle }
+
+    [Header("Harita Sınırları (Görünmez Duvarlar)")]
+    public bool useMapBounds = true;
+    public BoundaryType boundaryType = BoundaryType.Circle;
+
+    [Header("Dairesel Ada Sınırı (Organik Haritalar İçin İdeal)")]
+    public Vector3 islandCenter = Vector3.zero;
+    public float islandRadius = 35f;
+
+    [Header("Kutu Sınırı")]
+    public Vector2 minBounds = new Vector2(-40f, -40f);
+    public Vector2 maxBounds = new Vector2(40f, 40f);
+
+    private Vector3 previousValidPosition;
+
     void Start()
     {
         // Ana kamerayı bulup değişkene atıyoruz
         mainCamera = Camera.main;
         // Sahnede Joystick varsa otomatik bul
         joystick = FindFirstObjectByType<FloatingJoystick>();
+        previousValidPosition = transform.position;
     }
 
     void Update()
@@ -46,11 +63,11 @@ public class PlayerMovement : MonoBehaviour
         }
 
         // Kameranın baktığı yönü hesaplıyoruz (Y eksenini yani yüksekliği sıfırlıyoruz ki havaya uçmasın)
-        Vector3 camForward = mainCamera.transform.forward;
+        Vector3 camForward = mainCamera != null ? mainCamera.transform.forward : Vector3.forward;
         camForward.y = 0;
         camForward.Normalize();
 
-        Vector3 camRight = mainCamera.transform.right;
+        Vector3 camRight = mainCamera != null ? mainCamera.transform.right : Vector3.right;
         camRight.y = 0;
         camRight.Normalize();
 
@@ -85,6 +102,80 @@ public class PlayerMovement : MonoBehaviour
 
         // Karakteri hareket ettiriyoruz
         transform.Translate(movement * moveSpeed * Time.deltaTime, Space.World);
+
+        // --- MATEMATİKSEL GÖRÜNMEZ DUVAR (BOUNDS CLAMP) ---
+        if (useMapBounds)
+        {
+            ApplyMapBounds();
+        }
+    }
+
+    void ApplyMapBounds()
+    {
+        if (boundaryType == BoundaryType.Circle)
+        {
+            // Dairesel sınır: Merkezden olan mesafeyi yarıçap ile sınırla
+            Vector3 offset = transform.position - islandCenter;
+            offset.y = 0f; // Yüksekliği sıfırla
+            if (offset.magnitude > islandRadius)
+            {
+                Vector3 clamped = islandCenter + offset.normalized * islandRadius;
+                clamped.y = transform.position.y;
+                transform.position = clamped;
+            }
+        }
+        else if (boundaryType == BoundaryType.NavMesh)
+        {
+            // NavMesh sınır: Karakter adanın dışına çıkarsa en yakın geçerli zemine yapıştır
+            UnityEngine.AI.NavMeshHit hit;
+            if (UnityEngine.AI.NavMesh.SamplePosition(transform.position, out hit, 1.5f, UnityEngine.AI.NavMesh.AllAreas))
+            {
+                transform.position = hit.position;
+                previousValidPosition = hit.position;
+            }
+            else
+            {
+                transform.position = previousValidPosition;
+            }
+        }
+        else if (boundaryType == BoundaryType.Rectangle)
+        {
+            // Kutu sınır
+            Vector3 clampedPos = transform.position;
+            clampedPos.x = Mathf.Clamp(clampedPos.x, minBounds.x, maxBounds.x);
+            clampedPos.z = Mathf.Clamp(clampedPos.z, minBounds.y, maxBounds.y);
+            transform.position = clampedPos;
+        }
+    }
+
+    // Unity Scene ekranında sınırları görsel olarak sarı/yeşil renkle çizer
+    private void OnDrawGizmosSelected()
+    {
+        if (!useMapBounds) return;
+
+        Gizmos.color = Color.yellow;
+
+        if (boundaryType == BoundaryType.Circle)
+        {
+            // Daire çiz
+            int segments = 40;
+            float angleStep = 360f / segments;
+            Vector3 prevPoint = islandCenter + new Vector3(Mathf.Cos(0) * islandRadius, 0.5f, Mathf.Sin(0) * islandRadius);
+
+            for (int i = 1; i <= segments; i++)
+            {
+                float rad = i * angleStep * Mathf.Deg2Rad;
+                Vector3 nextPoint = islandCenter + new Vector3(Mathf.Cos(rad) * islandRadius, 0.5f, Mathf.Sin(rad) * islandRadius);
+                Gizmos.DrawLine(prevPoint, nextPoint);
+                prevPoint = nextPoint;
+            }
+        }
+        else if (boundaryType == BoundaryType.Rectangle)
+        {
+            Vector3 center = new Vector3((minBounds.x + maxBounds.x) * 0.5f, transform.position.y, (minBounds.y + maxBounds.y) * 0.5f);
+            Vector3 size = new Vector3(Mathf.Abs(maxBounds.x - minBounds.x), 2f, Mathf.Abs(maxBounds.y - minBounds.y));
+            Gizmos.DrawWireCube(center, size);
+        }
     }
 
     // YETENEK SİSTEMİ: Karakterin yürüme hızını artırır
