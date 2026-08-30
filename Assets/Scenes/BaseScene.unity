@@ -7996,7 +7996,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1028109720301520601, guid: 7817fb8fb38cd2a4cba46b6dd4907fa1, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1781276953229831655, guid: 7817fb8fb38cd2a4cba46b6dd4907fa1, type: 3}
       propertyPath: m_Name
@@ -8004,19 +8004,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1781276953229831655, guid: 7817fb8fb38cd2a4cba46b6dd4907fa1, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2887815581618795087, guid: 7817fb8fb38cd2a4cba46b6dd4907fa1, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4966552058692590585, guid: 7817fb8fb38cd2a4cba46b6dd4907fa1, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5294769912730571122, guid: 7817fb8fb38cd2a4cba46b6dd4907fa1, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5696788394027784724, guid: 7817fb8fb38cd2a4cba46b6dd4907fa1, type: 3}
       propertyPath: musicSlider
