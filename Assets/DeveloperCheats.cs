@@ -36,6 +36,12 @@ public class DeveloperCheats : MonoBehaviour
 
     void Awake()
     {
+        // GÜVENLİK: Eğer oyun mağazaya yüklenecek Release Build ise Dev Konsolunu tamamen kapat ve yok et!
+        #if !UNITY_EDITOR && !DEVELOPMENT_BUILD
+        Destroy(gameObject);
+        return;
+        #endif
+
         if (Instance == null)
         {
             Instance = this;
@@ -348,10 +354,10 @@ public class DeveloperCheats : MonoBehaviour
     {
         InitStyles();
 
-        // 1. Ekrandaki Küçük Şık [⚡ DEV] Açma/Kapama Butonu
+        // 1. Ekrandaki Küçük Şık [⚡ DEV] Açma/Kapama Butonu (Sol altta, yazıları kapatmaz)
         if (showFloatingDevButton)
         {
-            if (GUI.Button(new Rect(10, 10, 80, 26), showMenu ? "❌ KAPAT" : "⚡ DEV", showMenu ? warningButtonStyle : activeButtonStyle))
+            if (GUI.Button(new Rect(15, Screen.height - 50, 80, 28), showMenu ? "❌ KAPAT" : "⚡ DEV", showMenu ? warningButtonStyle : activeButtonStyle))
             {
                 ToggleMenu();
             }
