@@ -36,6 +36,11 @@ public class GameManager : MonoBehaviour
     }
 
     // --- SAHNE GEÇİŞLERİ ---
+    public void LoadTransitionScene()
+    {
+        SceneManager.LoadScene("TransitionScene");
+    }
+
     public void LoadCombatScene()
     {
         currentRunCoreSeedCount = 0; // Savaş başlarken tohumları sıfırla

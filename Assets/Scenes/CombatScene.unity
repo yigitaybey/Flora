@@ -2010,7 +2010,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 673a69da8d0419c42beb5603c76503bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
-  maxHealth: 100000
+  maxHealth: 100
   healthBarFill: {fileID: 1834616824}
   healthText: {fileID: 1084935455}
   invincibilityDuration: 0.5
