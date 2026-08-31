@@ -57,6 +57,40 @@ public class CombatUIManager : MonoBehaviour
         LoadSettingsUI();
     }
 
+    void Update()
+    {
+        // Escape tuşuna basıldığında Ayarlar / Pause menüsünü aç/kapat
+        var kb = UnityEngine.InputSystem.Keyboard.current;
+        if (kb != null)
+        {
+            if (kb.escapeKey.wasPressedThisFrame)
+            {
+                ToggleSettings();
+            }
+        }
+        else
+        {
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                ToggleSettings();
+            }
+        }
+    }
+
+    // Savaştan Çekil (End Run) Butonu: O ana kadar toplanan tohumlarla Base'e döner
+    public void EndRun()
+    {
+        Time.timeScale = 1f;
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.LoadBaseScene();
+        }
+        else
+        {
+            SceneManager.LoadScene("BaseScene");
+        }
+    }
+
     public void LoadSettingsUI()
     {
         if (GameManager.Instance != null)

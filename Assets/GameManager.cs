@@ -80,6 +80,27 @@ public class GameManager : MonoBehaviour
         SaveData();
     }
 
+    // --- SIFIRLAMA / RESET FONKSİYONLARI ---
+    public void ResetAllSeeds()
+    {
+        coreSeedCount = 0;
+        currentRunCoreSeedCount = 0;
+        SaveData();
+        Debug.Log("🧹 Tüm Tohumlar Sıfırlandı!");
+    }
+
+    public void ResetAllSaveData()
+    {
+        coreSeedCount = 0;
+        currentRunCoreSeedCount = 0;
+        towerCoreCount = 0;
+        radioTowerLevel = 1;
+        donationTreesCount = 0;
+        PlayerPrefs.DeleteAll();
+        SaveData();
+        Debug.Log("🗑️ Tüm Oyun Kayıtları Sıfırlandı (Fabrika Ayarları)!");
+    }
+
     public void UpgradeTower()
     {
         // Lvl 1'den Lvl 2'ye geçmek için 1 Çekirdek yetsin (Hackathon için)

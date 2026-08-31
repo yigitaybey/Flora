@@ -136,6 +136,26 @@ public class BaseUIManager : MonoBehaviour
         Debug.Log("Ayarlar Menüsü Açıldı!");
     }
 
+    // Tohumları sıfırlama butonu
+    public void ResetSeedsButton()
+    {
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.ResetAllSeeds();
+            UpdateCurrencyUI();
+        }
+    }
+
+    // Tüm save datasını fabrika ayarlarına döndürme butonu
+    public void ResetAllSaveDataButton()
+    {
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.ResetAllSaveData();
+            UpdateCurrencyUI();
+        }
+    }
+
     // Tohumun yanındaki '+' butonuna basınca çalışır (RevenueCat mağazası)
     public void OpenStore()
     {

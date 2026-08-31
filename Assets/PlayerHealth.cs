@@ -70,10 +70,11 @@ public class PlayerHealth : MonoBehaviour
     }
 
     private bool isDead = false;
+    public bool isGodMode = false; // Geliştirici Ölümsüzlük Modu
 
     public void TakeDamage(float amount)
     {
-        if (isDead) return;
+        if (isDead || isGodMode) return;
 
         // Eğer son hasar alma zamanının üzerinden yeterli süre geçmediyse hasarı yok say (I-Frames)
         if (Time.time < lastDamageTime + invincibilityDuration)

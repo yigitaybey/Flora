@@ -56,6 +56,12 @@ public class ExperienceManager : MonoBehaviour
         UpdateUI();
     }
 
+    // Geliştirici Hilesi: Anında Level Atlat
+    public void ForceLevelUp()
+    {
+        LevelUp();
+    }
+
     void LevelUp()
     {
         currentLevel++;
