@@ -11,36 +11,42 @@ public class FloatingJoystick : MonoBehaviour, IPointerDownHandler, IDragHandler
     public float handleRange = 100f; // Topuzun arka plandan ne kadar uzağa gidebileceği
 
     private Vector2 inputVector = Vector2.zero;
-    private CanvasGroup canvasGroup;
+    private CanvasGroup backgroundCanvasGroup;
 
     void Start()
     {
-        canvasGroup = GetComponent<CanvasGroup>();
-        if (canvasGroup == null)
+        if (background != null)
         {
-            canvasGroup = gameObject.AddComponent<CanvasGroup>();
+            backgroundCanvasGroup = background.GetComponent<CanvasGroup>();
+            if (backgroundCanvasGroup == null)
+            {
+                backgroundCanvasGroup = background.gameObject.AddComponent<CanvasGroup>();
+            }
+            backgroundCanvasGroup.alpha = 0f; // Başlangıçta gizle
+            backgroundCanvasGroup.blocksRaycasts = false; // Tıklamayı engellemesin
         }
-        
-        // Başlangıçta görünmez yap
-        canvasGroup.alpha = 0f;
     }
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        // Ekrana dokunulduğunda joystick'i parmağın olduğu yere taşı ve görünür yap
-        background.position = eventData.position;
-        handle.anchoredPosition = Vector2.zero;
-        canvasGroup.alpha = 1f; // Görünür yap
-        OnDrag(eventData); // Anında hareketi algıla
+        if (background != null)
+        {
+            // Ekranda dokunulan yere joystick'i taşı ve görünür yap
+            background.position = eventData.position;
+            if (handle != null) handle.anchoredPosition = Vector2.zero;
+            if (backgroundCanvasGroup != null) backgroundCanvasGroup.alpha = 1f;
+        }
+        OnDrag(eventData); // Anında hareketi başlat
     }
 
     public void OnDrag(PointerEventData eventData)
     {
-        // Parmağın arka plana göre ne kadar kaydırıldığını hesapla
+        if (background == null || handle == null) return;
+
+        // Parmağın joystick merkezine göre mesafesini hesapla
         Vector2 position;
         RectTransformUtility.ScreenPointToLocalPointInRectangle(background, eventData.position, eventData.pressEventCamera, out position);
 
-        // Vektörü hesapla ve menzili sınırla
         inputVector = position / (background.sizeDelta.x / 2f);
         if (inputVector.magnitude > 1f)
         {
@@ -53,10 +59,10 @@ public class FloatingJoystick : MonoBehaviour, IPointerDownHandler, IDragHandler
 
     public void OnPointerUp(PointerEventData eventData)
     {
-        // Parmak kalktığında her şeyi sıfırla ve gizle
+        // Parmak çekildiğinde sıfırla ve gizle
         inputVector = Vector2.zero;
-        handle.anchoredPosition = Vector2.zero;
-        canvasGroup.alpha = 0f;
+        if (handle != null) handle.anchoredPosition = Vector2.zero;
+        if (backgroundCanvasGroup != null) backgroundCanvasGroup.alpha = 0f;
     }
 
     // Dışarıdan okumak için
