@@ -304,7 +304,7 @@ Transform:
   m_GameObject: {fileID: 27099962}
   serializedVersion: 2
   m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
-  m_LocalPosition: {x: 97, y: 47.8, z: 35.7}
+  m_LocalPosition: {x: 97, y: 47.8, z: -124.4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -996,7 +996,7 @@ MonoBehaviour:
     m_Bits: 1
   m_VolumeTrigger: {fileID: 0}
   m_VolumeFrameworkUpdateModeOption: 2
-  m_RenderPostProcessing: 0
+  m_RenderPostProcessing: 1
   m_Antialiasing: 0
   m_AntialiasingQuality: 2
   m_StopNaN: 0
@@ -8262,6 +8262,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2258090285620426755, guid: 22d0bca7019330e4fb4d4b0ec8716959, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 5aee5ce6ae7e299418b40d56dc620c16, type: 2}
     - target: {fileID: 2641052773748929619, guid: 22d0bca7019330e4fb4d4b0ec8716959, type: 3}
       propertyPath: m_Name
       value: Kirmi_Kont

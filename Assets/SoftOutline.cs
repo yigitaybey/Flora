@@ -62,15 +62,20 @@ public class SoftOutline : MonoBehaviour
         MeshRenderer outMr = outlineObj.AddComponent<MeshRenderer>();
         
         // --- İŞİN SIRRI BURADA ---
-        // Işıktan etkilenmeyen (Unlit) düz bir materyal oluştur.
-        Material outlineMat = new Material(Shader.Find("Universal Render Pipeline/Unlit"));
+        // Işıktan etkilenmeyen (Unlit) düz bir materyal oluştur (Mobilde Pembe Olmayı Kesinlikle Önler)
+        Material outlineMat;
+        Shader shader = Shader.Find("Universal Render Pipeline/Unlit");
+        if (shader == null) shader = Shader.Find("Universal Render Pipeline/Lit");
+        if (shader == null) shader = Shader.Find("Sprites/Default");
+        if (shader == null) shader = Shader.Find("Unlit/Color");
+        outlineMat = new Material(shader);
         
         // CullMode.Front -> Modelin "Dış" yüzeylerini sil, sadece "İç" yüzeylerini göster.
-        // Bu sayede modelin kendisi, bu yeni büyütülmüş modelin önünü kapatır ve biz sadece kenarlardan taşan kısımları "dış çizgi" olarak görürüz.
-        outlineMat.SetInt("_Cull", (int)CullMode.Front); 
+        if (outlineMat.HasProperty("_Cull")) outlineMat.SetInt("_Cull", (int)CullMode.Front); 
         
         // Rengini ayarla
-        outlineMat.SetColor("_BaseColor", outlineColor);
+        if (outlineMat.HasProperty("_BaseColor")) outlineMat.SetColor("_BaseColor", outlineColor);
+        if (outlineMat.HasProperty("_Color")) outlineMat.SetColor("_Color", outlineColor);
         
         // Materyali objeye ata
         outMr.material = outlineMat;

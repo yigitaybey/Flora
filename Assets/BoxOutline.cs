@@ -6,6 +6,7 @@ public class BoxOutline : MonoBehaviour
     [Header("Kutu Çizgi Ayarları")]
     public Color lineColor = new Color(0.8f, 0.6f, 0.1f, 1f); // Altın sarısı/Turuncu
     public float lineWidth = 0.05f;
+    public Material lineMaterial; // İsteğe bağlı hazır materyal
     
     private GameObject lineObj;
 
@@ -22,10 +23,24 @@ public class BoxOutline : MonoBehaviour
 
         LineRenderer lr = lineObj.AddComponent<LineRenderer>();
         
-        // URP Unlit materyali kullan (parlak durması için)
-        Material lineMat = new Material(Shader.Find("Universal Render Pipeline/Unlit"));
-        lineMat.SetColor("_BaseColor", lineColor);
-        lr.material = lineMat;
+        // Materyal Belirleme (Mobilde Pembe Olmasını Kesinlikle Önler)
+        Material finalMat;
+        if (lineMaterial != null)
+        {
+            finalMat = new Material(lineMaterial);
+        }
+        else
+        {
+            Shader shader = Shader.Find("Universal Render Pipeline/Unlit");
+            if (shader == null) shader = Shader.Find("Universal Render Pipeline/Lit");
+            if (shader == null) shader = Shader.Find("Sprites/Default");
+            if (shader == null) shader = Shader.Find("Unlit/Color");
+            finalMat = new Material(shader);
+        }
+
+        if (finalMat.HasProperty("_BaseColor")) finalMat.SetColor("_BaseColor", lineColor);
+        if (finalMat.HasProperty("_Color")) finalMat.SetColor("_Color", lineColor);
+        lr.material = finalMat;
 
         lr.startWidth = lineWidth;
         lr.endWidth = lineWidth;
