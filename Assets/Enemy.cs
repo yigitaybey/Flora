@@ -28,7 +28,7 @@ public class Enemy : MonoBehaviour
     public float bossBaseHealth = 500f; // Boss (Chinar) canı (İstediğin sayıyı yazabilirsin!)
     public bool useFixedBossHealth = true; // True ise direkt yukarıdaki sayıyı alır (Testlerde kolay kesmek için)
     private float currentMaxHealth; // O anki levela göre hesaplanmış max can
-    private float currentHealth;
+    public float currentHealth;
 
     [Header("Sabit Statlar (Level İle Artmaz)")]
     public float moveSpeed = 3.2f; // Hız (3.5'ten 3.2'ye düşürüldü)

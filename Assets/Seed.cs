@@ -72,4 +72,9 @@ public class Seed : MonoBehaviour
             }
         }
     }
+
+    public void Magnetize()
+    {
+        isMagnetized = true;
+    }
 }

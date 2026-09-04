@@ -55,25 +55,42 @@ public class ConsumableItem : MonoBehaviour
                     foreach (GameObject enemy in activeEnemies)
                     {
                         Enemy eScript = enemy.GetComponent<Enemy>();
-                        // 9999 Hasar vurarak öldür
-                        if (eScript != null) eScript.TakeDamage(9999f); 
+                        if (eScript != null)
+                        {
+                            if (eScript.enemyType == EnemyType.Chinar || eScript.isElite)
+                            {
+                                // Boss veya Elit ise tek atma, canının %30'u kadar hasar vur
+                                eScript.TakeDamage(eScript.currentHealth * 0.3f);
+                            }
+                            else
+                            {
+                                // Normal düşmanlara tek at
+                                eScript.TakeDamage(9999f); 
+                            }
+                        }
                     }
                 }
-                Debug.Log("Güneş Işığı (Screen Wipe) Alındı! Tüm düşmanlar yok edildi.");
+                
+                // Ekran parlama ve zamanı durdurma efektini çağır!
+                if (Consumable.Instance != null)
+                {
+                    Consumable.Instance.PlayScreenWipeEffect();
+                }
+
+                Debug.Log("Güneş Işığı (Screen Wipe) Alındı! Düşmanlar kavruldu.");
                 break;
                 
             case ConsumableType.Vacuum:
-                // Sahnedeki tüm XP tohumlarını merkeze (oyuncuya) çek!
+                // Sahnedeki tüm XP tohumlarını merkeze (oyuncuya) mıknatıs gibi çek!
                 Seed[] allSeeds = FindObjectsByType<Seed>(FindObjectsSortMode.None);
                 foreach (Seed s in allSeeds)
                 {
                     if (s.gameObject.activeInHierarchy)
                     {
-                        // Seed.cs'teki Update mantığı sayesinde anında toplanacak
-                        s.transform.position = playerTransform.position; 
+                        s.Magnetize(); // Işınlanmak yerine mıknatıs gibi oyuncuya uçacaklar!
                     }
                 }
-                Debug.Log("Vakum (Vacuum) Alındı! Tüm XP'ler çekildi.");
+                Debug.Log("Vakum (Vacuum) Alındı! Tüm XP'ler çekiliyor.");
                 break;
         }
         
