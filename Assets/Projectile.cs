@@ -8,8 +8,8 @@ public class Projectile : MonoBehaviour
     private float damage;
     private int pierceCount;
     
-    // Optimizasyon: Çarpışma algılama mesafesinin karesi
-    private float hitDistanceSq = 0.5f * 0.5f;
+    // Optimizasyon: Çarpışma algılama mesafesinin karesi (1.5f * 1.5f) = 2.25f (Merminin isabet alanı büyütüldü)
+    private float hitDistanceSq = 2.25f;
 
     // Aynı düşmana her frame'de tekrar vurmamak için vurduğumuz düşmanların listesi
     private List<GameObject> hitEnemies = new List<GameObject>();
@@ -46,13 +46,17 @@ public class Projectile : MonoBehaviour
         transform.position += moveDirection * speed * Time.deltaTime;
 
         // Optimizasyonlu çarpışma testi (Physics Collider kullanmadan)
-        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+        // FindGameObjectsWithTag yerine Havuzdan aktif düşmanları çekiyoruz
+        List<GameObject> enemies = EnemyPool.Instance != null ? EnemyPool.Instance.GetAllActiveEnemies() : new List<GameObject>();
 
         foreach (GameObject enemyObj in enemies)
         {
-            if (!enemyObj.activeInHierarchy || hitEnemies.Contains(enemyObj)) continue;
+            if (enemyObj == null || !enemyObj.activeInHierarchy || hitEnemies.Contains(enemyObj)) continue;
 
-            float sqrDistance = (transform.position - enemyObj.transform.position).sqrMagnitude;
+            Vector3 diff = transform.position - enemyObj.transform.position;
+            diff.y = 0; // İzometrik oyunda yüksekliği görmezden gel, sadece X ve Z'ye bak
+            float sqrDistance = diff.sqrMagnitude;
+            
             if (sqrDistance <= hitDistanceSq)
             {
                 // Hedefi vurduk!

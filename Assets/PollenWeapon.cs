@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class PollenWeapon : MonoBehaviour
 {
@@ -18,43 +19,88 @@ public class PollenWeapon : MonoBehaviour
     [Tooltip("Silahın üzerindeki Animator (Ateş animasyonu)")]
     public Animator gunAnimator;
 
+    [Tooltip("Model ters veya yan bakıyorsa buradan Y eksenine 90, 180 veya -90 girerek düzeltebilirsiniz.")]
+    public Vector3 modelRotationOffset;
+
     [Tooltip("Silahın Sylva'dan ne kadar uzakta süzüleceği (Yarıçap)")]
     public float orbitRadius = 1.3f;
+    [Tooltip("Silah yanlış tarafta süzülüyorsa buraya 180 yazarak diğer tarafa atabilirsiniz.")]
+    public float orbitAngleOffset = 0f;
+    [Tooltip("Silah ateş ederken düşmanın diğer tarafına uçuyorsa (Pivot bozuksa) buraya 1, 2 veya -1, -2 gibi değerler girip düzeltin!")]
+    public float pivotFixZ = 0f;
     [Tooltip("Silahın yerden/Sylva'dan yüksekliği")]
     public float floatHeight = 0.8f;
     [Tooltip("Silahın düşmana doğru yörüngede kayma hızı")]
     public float orbitSpeed = 720f; // Derece / Saniye
 
+    [Header("Görsel Efektler")]
+    [Tooltip("Namlu ucu ateş efekti (Sprite veya Particle). Mermi sıkarken 0.05 sn görünüp kaybolur.")]
+    public GameObject muzzleFlash;
+    [Tooltip("Geri tepme şiddeti")]
+    public float recoilForce = 0.8f;
+
     // Silahın yörüngedeki anlık açısı (Düşman yokken en son kaldığı açıyı korur!)
     private float currentOrbitAngle = 45f;
     private float nextFireTime;
     private GameObject currentTarget;
+    private Vector3 currentRecoilOffset = Vector3.zero; // Geri tepme vektörü
 
     void Start()
     {
-        // Eğer gunModel atanmadıysa ve alt objelerde varsa otomatik bul
         if (gunModel == null && transform.childCount > 0)
         {
             gunModel = transform.GetChild(0);
+        }
+
+        if (gunModel != null)
+        {
+            // --- ULTIMATE AUTO-FIX ---
+            Camera[] cams = gunModel.GetComponentsInChildren<Camera>(true);
+            foreach (Camera c in cams) Destroy(c.gameObject);
+            
+            Light[] lights = gunModel.GetComponentsInChildren<Light>(true);
+            foreach (Light l in lights) Destroy(l.gameObject);
+
+            GameObject container = new GameObject(gunModel.name + "_AutoFix");
+            container.transform.position = gunModel.position;
+            container.transform.rotation = gunModel.rotation;
+            container.transform.parent = transform;
+
+            Transform originalGun = gunModel;
+            originalGun.SetParent(container.transform, true);
+
+            originalGun.localRotation = Quaternion.Euler(0, 180, 0);
+
+            Renderer[] renderers = originalGun.GetComponentsInChildren<Renderer>(true);
+            if (renderers.Length > 0)
+            {
+                Bounds bounds = renderers[0].bounds;
+                for (int i = 1; i < renderers.Length; i++)
+                {
+                    bounds.Encapsulate(renderers[i].bounds);
+                }
+                Vector3 worldOffset = bounds.center - container.transform.position;
+                originalGun.position -= worldOffset;
+            }
+
+            gunModel = container.transform;
         }
 
         if (gunModel != null && gunAnimator == null)
         {
             gunAnimator = gunModel.GetComponentInChildren<Animator>();
         }
+
+        if (muzzleFlash != null) muzzleFlash.SetActive(false);
     }
 
     void Update()
     {
         if (!enabled) return;
 
-        // 1. En yakın düşmanı tespit et
         currentTarget = FindNearestEnemy();
-
-        // 2. Silahın yörünge pozisyonunu ve açısını güncelle
         UpdateGunPositionAndRotation();
 
-        // 3. Ateşleme zamanı geldi mi?
         if (Time.time >= nextFireTime && currentTarget != null)
         {
             nextFireTime = Time.time + baseFireRate;
@@ -66,7 +112,6 @@ public class PollenWeapon : MonoBehaviour
     {
         if (gunModel == null) return;
 
-        // Düşman varsa, silah o düşmanın olduğu açıya doğru yörüngede kaysın
         if (currentTarget != null)
         {
             Vector3 toEnemy = (currentTarget.transform.position - transform.position);
@@ -74,22 +119,22 @@ public class PollenWeapon : MonoBehaviour
             if (toEnemy.sqrMagnitude > 0.001f)
             {
                 float targetAngle = Mathf.Atan2(toEnemy.x, toEnemy.z) * Mathf.Rad2Deg;
-                // En kısa yoldan pürüzsüzce hedef açıya dön
                 currentOrbitAngle = Mathf.MoveTowardsAngle(currentOrbitAngle, targetAngle, orbitSpeed * Time.deltaTime);
             }
         }
-        // Düşman yokken: currentOrbitAngle OLDUĞU GİBİ KALIR! (Öne sıfırlanmaz)
 
-        // Yörünge konumu hesapla (Sylva merkezli)
-        Quaternion orbitRot = Quaternion.Euler(0, currentOrbitAngle, 0);
+        Quaternion orbitRot = Quaternion.Euler(0, currentOrbitAngle + orbitAngleOffset, 0);
         Vector3 offset = orbitRot * Vector3.forward * orbitRadius;
         
-        // Hafif tatlı süzülme salınımı (Bobbing)
         float bobbing = Mathf.Sin(Time.time * 3f) * 0.05f;
-        Vector3 targetWorldPos = transform.position + offset + Vector3.up * (floatHeight + bobbing);
+        
+        // 1. Silahın pürüzsüz takip edeceği ana pozisyon (Lerp ile yavaşça gider)
+        Vector3 baseTargetPos = transform.position + offset + Vector3.up * (floatHeight + bobbing);
+        gunModel.position = Vector3.Lerp(gunModel.position, baseTargetPos, Time.deltaTime * 15f);
 
-        // Silah modelinin pozisyonunu uygula
-        gunModel.position = Vector3.Lerp(gunModel.position, targetWorldPos, Time.deltaTime * 15f);
+        // 2. KESKİN Geri Tepme (Lerp'in yavaşlığını by-pass edip direkt üstüne ekliyoruz ki net görünsün)
+        currentRecoilOffset = Vector3.Lerp(currentRecoilOffset, Vector3.zero, Time.deltaTime * 15f);
+        gunModel.position += currentRecoilOffset;
 
         // Silahın bakış açısı: Hedef varsa direkt hedefe, yoksa yörünge açısına doğru baksın
         if (currentTarget != null)
@@ -99,25 +144,29 @@ public class PollenWeapon : MonoBehaviour
             Vector3 lookDir = (lookTarget - gunModel.position).normalized;
             if (lookDir.sqrMagnitude > 0.001f)
             {
-                gunModel.rotation = Quaternion.Slerp(gunModel.rotation, Quaternion.LookRotation(lookDir), Time.deltaTime * 20f);
+                Quaternion targetRot = Quaternion.LookRotation(lookDir) * Quaternion.Euler(modelRotationOffset);
+                gunModel.rotation = Quaternion.Slerp(gunModel.rotation, targetRot, Time.deltaTime * 20f);
             }
         }
         else
         {
             // Düşman yokken en son baktığı yörünge yönüne baksın
-            gunModel.rotation = Quaternion.Slerp(gunModel.rotation, Quaternion.Euler(0, currentOrbitAngle, 0), Time.deltaTime * 10f);
+            Quaternion targetRot = Quaternion.Euler(0, currentOrbitAngle, 0) * Quaternion.Euler(modelRotationOffset);
+            gunModel.rotation = Quaternion.Slerp(gunModel.rotation, targetRot, Time.deltaTime * 10f);
         }
     }
 
     GameObject FindNearestEnemy()
     {
-        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+        if (EnemyPool.Instance == null) return null;
+
+        List<GameObject> enemies = EnemyPool.Instance.GetAllActiveEnemies();
         GameObject nearest = null;
         float minSqrDistance = range * range;
 
         foreach (GameObject enemyObj in enemies)
         {
-            if (!enemyObj.activeInHierarchy) continue;
+            if (enemyObj == null || !enemyObj.activeInHierarchy) continue;
 
             float sqrDist = (transform.position - enemyObj.transform.position).sqrMagnitude;
             if (sqrDist < minSqrDistance)
@@ -132,13 +181,23 @@ public class PollenWeapon : MonoBehaviour
 
     void FireAtTarget(GameObject target)
     {
-        // Ateş animasyonunu tetikle
         if (gunAnimator != null)
         {
             gunAnimator.SetTrigger("Shoot");
         }
 
-        // Namlu ucu varsa oradan, yoksa gunModel'in önünden çıkar
+        // Ateş ederken silahı geriye doğru it (Keskin Recoil efekti)
+        if (gunModel != null)
+        {
+            currentRecoilOffset = -gunModel.forward * recoilForce; 
+        }
+
+        // Namlu ateşini göster
+        if (muzzleFlash != null)
+        {
+            StartCoroutine(ShowMuzzleFlash());
+        }
+
         Vector3 spawnPos = firePoint != null ? firePoint.position : (gunModel != null ? gunModel.position : transform.position);
         
         Vector3 baseDirection = (target.transform.position - spawnPos).normalized;
@@ -193,6 +252,29 @@ public class PollenWeapon : MonoBehaviour
         {
             float finalDamage = damage * UpgradeManager.Instance.globalDamageMultiplier;
             projectile.Fire(direction, projectileSpeed, finalDamage, pierceAmount);
+        }
+    }
+
+    private System.Collections.IEnumerator ShowMuzzleFlash()
+    {
+        muzzleFlash.SetActive(true);
+        
+        ParticleSystem ps = muzzleFlash.GetComponent<ParticleSystem>();
+        if (ps != null)
+        {
+            ps.Play();
+        }
+        else
+        {
+            // Eğer Sprite ise yönünü ayarla
+            muzzleFlash.transform.localRotation = Quaternion.Euler(-90f, 0, UnityEngine.Random.Range(0f, 360f)); 
+        }
+
+        yield return new WaitForSeconds(0.1f);
+        
+        if (ps == null) 
+        {
+            muzzleFlash.SetActive(false); // Sadece sprite ise kapat, particle kendi kaybolur
         }
     }
 
