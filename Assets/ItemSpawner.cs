@@ -56,10 +56,14 @@ public class ItemSpawner : MonoBehaviour
         float spawnX = playerTransform.position.x + Mathf.Cos(randomAngle) * randomRadius;
         float spawnZ = playerTransform.position.z + Mathf.Sin(randomAngle) * randomRadius;
 
-        // Objenin yaratılacağı nokta (Y eksenini oyuncuyla aynı hizada tutuyoruz ki havada uçmasın)
-        Vector3 spawnPosition = new Vector3(spawnX, playerTransform.position.y, spawnZ);
+        Vector3 randomPosition = new Vector3(spawnX, playerTransform.position.y, spawnZ);
 
-        // Objeyi sahneye yerleştir
-        Instantiate(itemPrefab, spawnPosition, Quaternion.identity);
+        // NavMesh üzerinde geçerli bir nokta mı kontrol et
+        UnityEngine.AI.NavMeshHit hit;
+        if (UnityEngine.AI.NavMesh.SamplePosition(randomPosition, out hit, 2f, UnityEngine.AI.NavMesh.AllAreas))
+        {
+            // Objeyi sahneye yerleştir (hit.position Y eksenini zemine oturtur)
+            Instantiate(itemPrefab, hit.position, Quaternion.identity);
+        }
     }
 }
