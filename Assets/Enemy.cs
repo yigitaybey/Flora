@@ -399,13 +399,18 @@ public class Enemy : MonoBehaviour
         agent.enabled = false;
         gameObject.SetActive(false);
 
-        // 6. BOSS (CHINAR) ÖLDÜYSE KAZANDIN EKRANINI AÇ!
+        // 6. BOSS (CHINAR) ÖLDÜYSE KULE ÇEKİRDEĞİNİ DÜŞÜR!
         if (enemyType == EnemyType.Chinar)
         {
-            Debug.Log("🎉 CHINAR (BOSS) YENİLDİ! KAZANDIN EKRANI AÇILIYOR...");
-            if (CombatUIManager.Instance != null)
+            Debug.Log("🎉 CHINAR (BOSS) YENİLDİ! Kule çekirdeği (Core Seed) düşüyor...");
+            if (Consumable.Instance != null && Consumable.Instance.coreSeedPrefab != null)
             {
-                CombatUIManager.Instance.TriggerVictory(1.5f); // 1.5 saniye sonra ekran açılır
+                // Boss'un öldüğü yere kule çekirdeğini fırlat (Dönüş rotasyonunu koruyarak)
+                Instantiate(Consumable.Instance.coreSeedPrefab, transform.position + Vector3.up * 0.5f, Consumable.Instance.coreSeedPrefab.transform.rotation);
+            }
+            else
+            {
+                Debug.LogWarning("DİKKAT: Boss öldü ama Core Seed Prefab'ı ConsumableManager'a atanmamış!");
             }
         }
     }

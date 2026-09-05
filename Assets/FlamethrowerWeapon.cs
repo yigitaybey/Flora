@@ -12,8 +12,10 @@ public class FlamethrowerWeapon : MonoBehaviour
 
     [Header("Görsel Ayarlar")]
     public GameObject flameVisual;
+    public float rotationSpeed = 8f; // Silahın düşmana doğru ne kadar yumuşak (slide) döneceği
 
     private float nextTickTime;
+    private Vector3 currentTargetDirection = Vector3.forward;
 
     void Start()
     {
@@ -26,6 +28,14 @@ public class FlamethrowerWeapon : MonoBehaviour
         {
             if (flameVisual != null && flameVisual.activeSelf) flameVisual.SetActive(false);
             return;
+        }
+
+        // --- YUMUŞAK (SLIDE) DÖNÜŞ (RADYAL HAREKET) ---
+        if (flameVisual != null && currentTargetDirection != Vector3.zero && flameVisual.activeSelf)
+        {
+            // Silahın düşmana anında değil, yağ gibi akarak (Slerp) dönmesi
+            Quaternion targetRotation = Quaternion.LookRotation(currentTargetDirection);
+            flameVisual.transform.rotation = Quaternion.Slerp(flameVisual.transform.rotation, targetRotation, Time.deltaTime * rotationSpeed);
         }
 
         if (Time.time >= nextTickTime)
@@ -56,19 +66,20 @@ public class FlamethrowerWeapon : MonoBehaviour
         if (nearestEnemy == null)
         {
             if (flameVisual != null && flameVisual.activeSelf)
-                flameVisual.SetActive(false);
+                flameVisual.SetActive(false); // Düşman yoksa ateşi kes
             return;
         }
 
         if (flameVisual != null && !flameVisual.activeSelf)
-            flameVisual.SetActive(true);
+            flameVisual.SetActive(true); // Düşman varsa alevi yak
 
+        // Sadece Hedef Yönünü güncelle, Update() içinde oraya yumuşakça dönecek
         Vector3 fireDirection = (nearestEnemy.transform.position - transform.position).normalized;
         fireDirection.y = 0; 
         
-        if (flameVisual != null && fireDirection != Vector3.zero)
+        if (fireDirection != Vector3.zero)
         {
-            flameVisual.transform.forward = fireDirection;
+            currentTargetDirection = fireDirection;
         }
 
         float sqrRange = range * range;

@@ -5,7 +5,8 @@ public enum ConsumableType
 {
     Potion,      // Şifa
     ScreenWipe,  // Güneş Işığı (Tüm düşmanları yok eder)
-    Vacuum       // Vakum (Tüm XP tohumlarını çeker)
+    Vacuum,      // Vakum (Tüm XP tohumlarını çeker)
+    CoreSeed     // Kule Çekirdeği (Boss'tan düşer, oyunu bitirir)
 }
 
 // Bu sınıf sadece menajer/spawner görevi görecek
@@ -17,6 +18,7 @@ public class Consumable : MonoBehaviour
     public GameObject potionPrefab;
     public GameObject screenWipePrefab;
     public GameObject vacuumPrefab;
+    public GameObject coreSeedPrefab;
 
     void Awake()
     {
@@ -45,8 +47,28 @@ public class Consumable : MonoBehaviour
 
         if (prefabToSpawn != null)
         {
-            // Eşyayı yere düşür (Biraz yukarıdan düşebilir veya doğrudan yerde çıkabilir)
-            Instantiate(prefabToSpawn, position + Vector3.up * 0.5f, Quaternion.identity);
+            float spawnY = 0.5f;
+            Quaternion spawnRot = prefabToSpawn.transform.rotation;
+
+            // Kullanıcının talep ettiği özel Y yükseklikleri ve Rotasyonlar
+            if (prefabToSpawn == potionPrefab)
+            {
+                spawnY = 0.84f;
+                // Vital Seed (Potion) için Z eksenini 90 derece yap
+                Vector3 currentEuler = spawnRot.eulerAngles;
+                spawnRot = Quaternion.Euler(currentEuler.x, currentEuler.y, 90f);
+            }
+            else if (prefabToSpawn == vacuumPrefab)
+            {
+                spawnY = 1.5f; // Magnet için özel yükseklik
+            }
+            else if (prefabToSpawn == screenWipePrefab)
+            {
+                spawnY = 1.47f; // Screen Wipe için özel yükseklik
+            }
+
+            // Eşyayı özel yükseklik ve rotasyon ile yere düşür
+            Instantiate(prefabToSpawn, position + Vector3.up * spawnY, spawnRot);
         }
         else
         {

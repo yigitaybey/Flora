@@ -11,6 +11,9 @@ public class UVLampWeapon : MonoBehaviour
 
     [Header("Görsel Ayarlar")]
     public Transform auraVisual;
+    
+    [Tooltip("Oyun başlamadan önce ayarladığınız o mükemmel boyut (Örn: 0.06)")]
+    public float baseVisualScale = 0.06f; 
 
     private float nextTickTime;
 
@@ -64,8 +67,17 @@ public class UVLampWeapon : MonoBehaviour
     {
         if (auraVisual != null)
         {
-            float diameter = damageRadius * 2f;
-            auraVisual.localScale = new Vector3(diameter, 0.1f, diameter);
+            // Başlangıç yarıçapımız 2.5'ti. Mevcut yarıçapın ona oranını buluyoruz.
+            float scaleRatio = damageRadius / 2.5f;
+            
+            // Senin bulduğun o mükemmel boyutu (0.06) bu oranla çarpıyoruz.
+            float finalScale = baseVisualScale * scaleRatio;
+            
+            // X ve Y eksenlerine senin bulduğun o kusursuz değeri veriyoruz
+            auraVisual.localScale = new Vector3(finalScale, finalScale, 1f);
+
+            // Ayak altında titrememesi için milimetrik yükseklik
+            auraVisual.localPosition = new Vector3(0f, 0.05f, 0f);
         }
     }
 

@@ -62,8 +62,9 @@ public class ItemSpawner : MonoBehaviour
         UnityEngine.AI.NavMeshHit hit;
         if (UnityEngine.AI.NavMesh.SamplePosition(randomPosition, out hit, 2f, UnityEngine.AI.NavMesh.AllAreas))
         {
-            // Objeyi sahneye yerleştir (hit.position Y eksenini zemine oturtur)
-            Instantiate(itemPrefab, hit.position, Quaternion.identity);
+            // Objeyi sahneye yerleştir (hit.position Y eksenini zemine oturtur, bu yüzden biraz yukarı kaldırıyoruz)
+            // Quaternion.identity yerine prefabın kendi rotasyonunu kullanıyoruz ki dik dursun!
+            Instantiate(itemPrefab, hit.position + Vector3.up * 0.84f, itemPrefab.transform.rotation);
         }
     }
 }

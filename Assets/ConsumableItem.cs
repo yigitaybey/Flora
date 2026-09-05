@@ -21,10 +21,19 @@ public class ConsumableItem : MonoBehaviour
 
     void Update()
     {
+        // 1. GÖRSEL CİLA: Eşyalar sürekli olarak kendi etrafında yavaşça döner (Space.World ekledik)
+        transform.Rotate(0, 45f * Time.deltaTime, 0, Space.World);
+
         if (playerTransform == null) return;
 
-        // Eşya ile oyuncu arasındaki mesafeyi ölç (Unity Physics/Collider kullanmadan)
-        float sqrDistance = (transform.position - playerTransform.position).sqrMagnitude;
+        // Eşya ile oyuncu arasındaki mesafeyi ölç (Y eksenini yoksayarak hesapla)
+        // Böylece Core Seed gibi çok büyük/uzun objelerin merkez noktası havada olsa bile oyuncuya değdiği algılanır.
+        Vector3 flatItemPos = transform.position;
+        flatItemPos.y = 0;
+        Vector3 flatPlayerPos = playerTransform.position;
+        flatPlayerPos.y = 0;
+
+        float sqrDistance = (flatItemPos - flatPlayerPos).sqrMagnitude;
         
         // Eğer oyuncu yeterince yaklaştıysa (2.5f uzaklık karesi) topla
         if (sqrDistance <= 2.5f)
@@ -80,7 +89,7 @@ public class ConsumableItem : MonoBehaviour
                 Debug.Log("Güneş Işığı (Screen Wipe) Alındı! Düşmanlar kavruldu.");
                 break;
                 
-            case ConsumableType.Vacuum:
+        case ConsumableType.Vacuum:
                 // Sahnedeki tüm XP tohumlarını merkeze (oyuncuya) mıknatıs gibi çek!
                 Seed[] allSeeds = FindObjectsByType<Seed>(FindObjectsSortMode.None);
                 foreach (Seed s in allSeeds)
@@ -91,6 +100,19 @@ public class ConsumableItem : MonoBehaviour
                     }
                 }
                 Debug.Log("Vakum (Vacuum) Alındı! Tüm XP'ler çekiliyor.");
+                break;
+                
+            case ConsumableType.CoreSeed:
+                // Boss'un düşürdüğü Çekirdek alındı: OYUN BİTER VE KAZANILIR!
+                Debug.Log("✨ KULE ÇEKİRDEĞİ ALINDI! ZAFER!");
+                if (GameManager.Instance != null)
+                {
+                    GameManager.Instance.towerCoreCount++;
+                }
+                if (CombatUIManager.Instance != null)
+                {
+                    CombatUIManager.Instance.TriggerVictory(0.5f); // 0.5 saniye sonra ekran açılır
+                }
                 break;
         }
         
