@@ -17,9 +17,21 @@ public class FlamethrowerWeapon : MonoBehaviour
     private float nextTickTime;
     private Vector3 currentTargetDirection = Vector3.forward;
 
+    private ParticleSystem[] flameParticles;
+    private bool isFiring = false;
+
     void Start()
     {
-        // Visual boyutları vb. Setup
+        if (flameVisual != null)
+        {
+            flameParticles = flameVisual.GetComponentsInChildren<ParticleSystem>(true);
+            
+            // Oyun başlar başlamaz (silah alındığında) parçacıkların otomatik ateşlenmesini engelle
+            foreach (var ps in flameParticles)
+            {
+                if (ps != null) ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            }
+        }
     }
 
     void Update()
@@ -29,23 +41,42 @@ public class FlamethrowerWeapon : MonoBehaviour
             if (flameVisual != null && flameVisual.activeSelf) flameVisual.SetActive(false);
             return;
         }
-
-        // --- YUMUŞAK (SLIDE) DÖNÜŞ (RADYAL HAREKET) ---
-        if (flameVisual != null && currentTargetDirection != Vector3.zero && flameVisual.activeSelf)
+        else
         {
-            // Silahın düşmana anında değil, yağ gibi akarak (Slerp) dönmesi
-            Quaternion targetRotation = Quaternion.LookRotation(currentTargetDirection);
-            flameVisual.transform.rotation = Quaternion.Slerp(flameVisual.transform.rotation, targetRotation, Time.deltaTime * rotationSpeed);
+            // Silah açıksa modeli her zaman görünür olsun
+            if (flameVisual != null && !flameVisual.activeSelf) flameVisual.SetActive(true);
         }
 
-        if (Time.time >= nextTickTime)
+        // Hedef bulma ve Namlu Dönüşünü (Görseli) HER KARE anında yap
+        HandleTargetingAndVisuals();
+
+        // Hasar verme işlemini (Tick) sadece düşman varken ve süre dolduğunda yap
+        if (isFiring && Time.time >= nextTickTime)
         {
             nextTickTime = Time.time + tickRate;
-            FireFlamethrower();
+            DealDamageInCone();
         }
     }
 
-    void FireFlamethrower()
+    void SetFiringState(bool fire)
+    {
+        if (isFiring == fire) return;
+        isFiring = fire;
+
+        if (flameParticles == null) return;
+
+        foreach (var ps in flameParticles)
+        {
+            if (ps == null) continue;
+            
+            if (fire)
+                ps.Play(true);
+            else
+                ps.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+        }
+    }
+
+    void HandleTargetingAndVisuals()
     {
         GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
         GameObject nearestEnemy = null;
@@ -65,15 +96,13 @@ public class FlamethrowerWeapon : MonoBehaviour
 
         if (nearestEnemy == null)
         {
-            if (flameVisual != null && flameVisual.activeSelf)
-                flameVisual.SetActive(false); // Düşman yoksa ateşi kes
+            SetFiringState(false); // Düşman yoksa anında ateşi kes
             return;
         }
 
-        if (flameVisual != null && !flameVisual.activeSelf)
-            flameVisual.SetActive(true); // Düşman varsa alevi yak
+        SetFiringState(true); // Düşman menzildeyse ANINDA ateşe başla
 
-        // Sadece Hedef Yönünü güncelle, Update() içinde oraya yumuşakça dönecek
+        // Hedef yönünü sürekli güncelle
         Vector3 fireDirection = (nearestEnemy.transform.position - transform.position).normalized;
         fireDirection.y = 0; 
         
@@ -82,6 +111,17 @@ public class FlamethrowerWeapon : MonoBehaviour
             currentTargetDirection = fireDirection;
         }
 
+        // --- YUMUŞAK (SLIDE) DÖNÜŞ (RADYAL HAREKET) ---
+        if (flameVisual != null && currentTargetDirection != Vector3.zero)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(currentTargetDirection);
+            flameVisual.transform.rotation = Quaternion.Slerp(flameVisual.transform.rotation, targetRotation, Time.deltaTime * rotationSpeed);
+        }
+    }
+
+    void DealDamageInCone()
+    {
+        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
         float sqrRange = range * range;
         
         foreach (GameObject enemyObj in enemies)
@@ -95,7 +135,7 @@ public class FlamethrowerWeapon : MonoBehaviour
 
             if (sqrDistanceToEnemy <= sqrRange)
             {
-                float angle = Vector3.Angle(fireDirection, directionToEnemy.normalized);
+                float angle = Vector3.Angle(currentTargetDirection, directionToEnemy.normalized);
 
                 if (angle <= coneAngle / 2f)
                 {
