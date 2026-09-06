@@ -47,6 +47,8 @@ public class AxeWeapon : MonoBehaviour
         }
     }
 
+    private Dictionary<GameObject, float> enemyLastHitTime = new Dictionary<GameObject, float>();
+
     void Update()
     {
         if (!enabled || activeAxes.Count == 0)
@@ -101,12 +103,8 @@ public class AxeWeapon : MonoBehaviour
             }
         }
 
-        // HASAR HESAPLAMA
-        if (Time.time >= nextTickTime)
-        {
-            nextTickTime = Time.time + tickRate;
-            DealDamage();
-        }
+        // HASAR KONTROLÜNÜ (ÇARPIŞMAYI) HER KARE YAP
+        CheckAxeCollisions();
     }
 
     public Vector3 GetBladeWorldPosition(Transform axe)
@@ -123,14 +121,24 @@ public class AxeWeapon : MonoBehaviour
         return axe.position + (outwardDir * bladeForwardDistance) + (Vector3.up * bladeUpOffset);
     }
 
-    void DealDamage()
+    void CheckAxeCollisions()
     {
-        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+        // Her kare "FindGameObjectsWithTag" yapmak performansı düşürür, bu yüzden Havuzu (Pool) kullanıyoruz
+        List<GameObject> enemies;
+        if (EnemyPool.Instance != null)
+        {
+            enemies = EnemyPool.Instance.GetAllActiveEnemies();
+        }
+        else
+        {
+            enemies = new List<GameObject>(GameObject.FindGameObjectsWithTag("Enemy"));
+        }
+
         float hitRadiusSqr = hitArea * hitArea;
 
         foreach (GameObject enemyObj in enemies)
         {
-            if (!enemyObj.activeInHierarchy) continue;
+            if (enemyObj == null || !enemyObj.activeInHierarchy) continue;
 
             foreach (Transform axe in activeAxes)
             {
@@ -140,13 +148,19 @@ public class AxeWeapon : MonoBehaviour
                 
                 if (sqrDistance <= hitRadiusSqr)
                 {
-                    Enemy enemyScript = enemyObj.GetComponent<Enemy>();
-                    if (enemyScript != null)
+                    // Düşman baltaya DEĞDİ! Soğuma (Cooldown) kontrolü yap:
+                    if (!enemyLastHitTime.ContainsKey(enemyObj) || Time.time >= enemyLastHitTime[enemyObj] + tickRate)
                     {
-                        // Global hasar çarpanını dahil et
-                        float finalDamage = damage * UpgradeManager.Instance.globalDamageMultiplier;
-                        enemyScript.TakeDamage(finalDamage);
-                        break; // 1 tick'te 1 balta vursun yeter
+                        Enemy enemyScript = enemyObj.GetComponent<Enemy>();
+                        if (enemyScript != null)
+                        {
+                            // Global hasar çarpanını dahil et
+                            float finalDamage = damage * UpgradeManager.Instance.globalDamageMultiplier;
+                            enemyScript.TakeDamage(finalDamage);
+                            
+                            // Bu düşmanın hasar yediği anı kaydet (Cooldown başlasın)
+                            enemyLastHitTime[enemyObj] = Time.time;
+                        }
                     }
                 }
             }
