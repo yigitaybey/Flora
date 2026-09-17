@@ -19,6 +19,7 @@ public class GameManager : MonoBehaviour
     public float musicVolume = 1f;
     public bool isScreenShakeEnabled = true;
     public bool isDamageNumEnabled = true;
+    public bool isHapticsEnabled = true;
 
     void Awake()
     {
@@ -128,6 +129,7 @@ public class GameManager : MonoBehaviour
         PlayerPrefs.SetFloat("MusicVolume", musicVolume);
         PlayerPrefs.SetInt("ScreenShake", isScreenShakeEnabled ? 1 : 0);
         PlayerPrefs.SetInt("DamageNum", isDamageNumEnabled ? 1 : 0);
+        PlayerPrefs.SetInt("HapticsEnabled", isHapticsEnabled ? 1 : 0);
         PlayerPrefs.Save();
     }
 
@@ -143,5 +145,6 @@ public class GameManager : MonoBehaviour
         musicVolume = PlayerPrefs.GetFloat("MusicVolume", 1f);
         isScreenShakeEnabled = PlayerPrefs.GetInt("ScreenShake", 1) == 1;
         isDamageNumEnabled = PlayerPrefs.GetInt("DamageNum", 1) == 1;
+        isHapticsEnabled = PlayerPrefs.GetInt("HapticsEnabled", 1) == 1;
     }
 }

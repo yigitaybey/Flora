@@ -12,6 +12,8 @@ public class CameraFollow : MonoBehaviour
     [Header("Zoom Out (Level Atlama Genişlemesi)")]
     public float maxZoomOutMultiplier = 1.6f; // Max levelde kamera %60 daha geniş bir alanı görecek
 
+    public static CameraFollow Instance;
+
     private Camera cam;
     private float baseOrthographicSize;
 
@@ -20,13 +22,32 @@ public class CameraFollow : MonoBehaviour
     public Vector2 minCameraBounds = new Vector2(-30f, -30f); // X ve Z için minimum sınır
     public Vector2 maxCameraBounds = new Vector2(30f, 30f);   // X ve Z için maksimum sınır
 
+    [Header("Ekran Sarsıntısı (Screen Shake)")]
+    private Vector3 shakeOffset = Vector3.zero;
+    private float shakeDuration = 0f;
+    private float shakeMagnitude = 0.08f;
+    private float currentShakeStrength = 0f;
+
     void Awake()
     {
+        if (Instance == null) Instance = this;
+
         cam = GetComponent<Camera>();
         if (cam != null && cam.orthographic)
         {
             baseOrthographicSize = cam.orthographicSize;
         }
+    }
+
+    public void Shake(float duration = 0.10f, float magnitude = 0.08f)
+    {
+        // Ayarlardan ekran sarsıntısı kapatılmışsa sarsma
+        if (GameManager.Instance != null && !GameManager.Instance.isScreenShakeEnabled) return;
+        if (CombatUIManager.Instance != null && !CombatUIManager.fallbackScreenShakeEnabled) return;
+
+        shakeDuration = duration;
+        shakeMagnitude = magnitude;
+        currentShakeStrength = magnitude;
     }
 
     void LateUpdate()
@@ -70,7 +91,20 @@ public class CameraFollow : MonoBehaviour
             desiredPosition.z = Mathf.Clamp(desiredPosition.z, minCameraBounds.y, maxCameraBounds.y);
         }
 
-        transform.position = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed * Time.deltaTime);
+        // Ekran Sarsıntısı (Screen Shake) hesapla - Kamera ekran düzleminde yumuşak ve tok
+        if (shakeDuration > 0f)
+        {
+            Vector2 random2D = Random.insideUnitCircle * currentShakeStrength;
+            shakeOffset = (transform.right * random2D.x) + (transform.up * random2D.y);
+            shakeDuration -= Time.unscaledDeltaTime;
+            currentShakeStrength = Mathf.Lerp(currentShakeStrength, 0f, 12f * Time.unscaledDeltaTime);
+        }
+        else
+        {
+            shakeOffset = Vector3.zero;
+        }
+
+        transform.position = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed * Time.deltaTime) + shakeOffset;
     }
 
     private void OnDrawGizmosSelected()

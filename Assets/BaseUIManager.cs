@@ -20,6 +20,7 @@ public class BaseUIManager : MonoBehaviour
     public UnityEngine.UI.Slider musicSlider;
     public UnityEngine.UI.Toggle screenShakeToggle;
     public UnityEngine.UI.Toggle damageNumToggle;
+    public UnityEngine.UI.Toggle hapticsToggle;
 
     void Awake()
     {
@@ -43,6 +44,7 @@ public class BaseUIManager : MonoBehaviour
             if (musicSlider != null) musicSlider.value = GameManager.Instance.musicVolume;
             if (screenShakeToggle != null) screenShakeToggle.isOn = GameManager.Instance.isScreenShakeEnabled;
             if (damageNumToggle != null) damageNumToggle.isOn = GameManager.Instance.isDamageNumEnabled;
+            if (hapticsToggle != null) hapticsToggle.isOn = GameManager.Instance.isHapticsEnabled;
         }
     }
 
@@ -238,5 +240,16 @@ public class BaseUIManager : MonoBehaviour
             GameManager.Instance.isDamageNumEnabled = value;
             GameManager.Instance.SaveSettings();
         }
+    }
+
+    public void OnHapticsToggled(bool value)
+    {
+        Debug.Log("Titreşim (Haptics) UI'dan gelen değer: " + value);
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.isHapticsEnabled = value;
+            GameManager.Instance.SaveSettings();
+        }
+        HapticFeedback.isEnabled = value;
     }
 }

@@ -28,10 +28,12 @@ public class CombatUIManager : MonoBehaviour
     public UnityEngine.UI.Slider musicSlider;
     public UnityEngine.UI.Toggle screenShakeToggle;
     public UnityEngine.UI.Toggle damageNumToggle;
+    public UnityEngine.UI.Toggle hapticsToggle;
 
     // GameManager yokken (Savaş sahnesi direkt test edilirken) ayarları tutmak için statik değişkenler
     public static bool fallbackDamageNumEnabled = true;
     public static bool fallbackScreenShakeEnabled = true;
+    public static bool fallbackHapticsEnabled = true;
 
     // Kazanılan tohum miktarını takip etmek için
     private int runLoot = 0;
@@ -99,12 +101,14 @@ public class CombatUIManager : MonoBehaviour
             if (musicSlider != null) musicSlider.value = GameManager.Instance.musicVolume;
             if (screenShakeToggle != null) screenShakeToggle.isOn = GameManager.Instance.isScreenShakeEnabled;
             if (damageNumToggle != null) damageNumToggle.isOn = GameManager.Instance.isDamageNumEnabled;
+            if (hapticsToggle != null) hapticsToggle.isOn = GameManager.Instance.isHapticsEnabled;
         }
         else
         {
             // Savaş sahnesi direkt test ediliyorsa
             if (screenShakeToggle != null) screenShakeToggle.isOn = fallbackScreenShakeEnabled;
             if (damageNumToggle != null) damageNumToggle.isOn = fallbackDamageNumEnabled;
+            if (hapticsToggle != null) hapticsToggle.isOn = fallbackHapticsEnabled;
         }
     }
 
@@ -276,5 +280,19 @@ public class CombatUIManager : MonoBehaviour
         {
             fallbackDamageNumEnabled = value;
         }
+    }
+
+    public void OnHapticsToggled(bool value)
+    {
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.isHapticsEnabled = value;
+            GameManager.Instance.SaveSettings();
+        }
+        else
+        {
+            fallbackHapticsEnabled = value;
+        }
+        HapticFeedback.isEnabled = value;
     }
 }

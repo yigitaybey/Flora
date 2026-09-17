@@ -467,6 +467,19 @@ public class DeveloperCheats : MonoBehaviour
             if (GameManager.Instance != null) GameManager.Instance.LoadBaseScene();
         }
 
+        GUILayout.Space(6);
+        GUILayout.Label("📳 TİTREŞİM & SARSINTI TESTİ", headerStyle);
+        GUILayout.BeginHorizontal();
+        if (GUILayout.Button("Hafif", buttonStyle, GUILayout.Height(24))) { HapticFeedback.TriggerLight(); ShowToast("📳 Hafif Titreşim"); }
+        if (GUILayout.Button("Orta", buttonStyle, GUILayout.Height(24))) { HapticFeedback.TriggerMedium(); ShowToast("📳 Orta Titreşim (Hasar)"); }
+        if (GUILayout.Button("Güçlü", buttonStyle, GUILayout.Height(24))) { HapticFeedback.TriggerHeavy(); ShowToast("📳 Güçlü Titreşim (Level/Ölüm)"); }
+        if (GUILayout.Button("Sarsıntı", activeButtonStyle, GUILayout.Height(24))) 
+        { 
+            if (CameraFollow.Instance != null) CameraFollow.Instance.Shake(0.3f, 0.4f); 
+            ShowToast("📳 Ekran Sarsıldı (Screen Shake)"); 
+        }
+        GUILayout.EndHorizontal();
+
         // Pencereyi sürüklenebilir yap
         GUI.DragWindow(new Rect(0, 0, 10000, 30));
     }

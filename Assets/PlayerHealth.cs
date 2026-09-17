@@ -90,6 +90,12 @@ public class PlayerHealth : MonoBehaviour
 
         Debug.Log("Sylva Hasar Aldı! Kalan Can: " + currentHealth);
 
+        // Hasar anında mobil titreşim
+        HapticFeedback.TriggerMedium();
+
+        // Hasar anında hafif ekran sarsıntısı (Screen Shake)
+        if (CameraFollow.Instance != null) CameraFollow.Instance.Shake(0.10f, 0.08f);
+
         UpdateUI();
 
         if (currentHealth <= 0)
@@ -102,6 +108,9 @@ public class PlayerHealth : MonoBehaviour
     {
         isDead = true;
         Debug.Log("Sylva Öldü! Ölüm ekranı açılıyor...");
+        
+        // Ölüm anında güçlü mobil titreşim
+        HapticFeedback.TriggerHeavy();
         
         // Yeni UI sistemimizdeki ölüm ekranını çağır
         if (CombatUIManager.Instance != null)

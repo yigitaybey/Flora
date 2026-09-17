@@ -44,6 +44,7 @@ public class ConsumableItem : MonoBehaviour
 
     void CollectConsumable()
     {
+        HapticFeedback.TriggerLight();
         PlayerHealth playerHealth = playerTransform.GetComponent<PlayerHealth>();
         
         switch (type)
@@ -85,6 +86,9 @@ public class ConsumableItem : MonoBehaviour
                 {
                     Consumable.Instance.PlayScreenWipeEffect();
                 }
+
+                // Ekran sarsıntısı
+                if (CameraFollow.Instance != null) CameraFollow.Instance.Shake(0.25f, 0.16f);
 
                 Debug.Log("Güneş Işığı (Screen Wipe) Alındı! Düşmanlar kavruldu.");
                 break;

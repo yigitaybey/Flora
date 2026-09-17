@@ -70,6 +70,9 @@ public class ExperienceManager : MonoBehaviour
         
         Debug.Log("LEVEL ATLADIN! Yeni Level: " + currentLevel);
         
+        // Seviye atlama anında tatmin edici mobil titreşim
+        HapticFeedback.TriggerHeavy();
+
         // Eventi dinleyen diğer scriptlere (Örn: EnemySpawner) haber ver
         OnLevelUpEvent?.Invoke();
 
