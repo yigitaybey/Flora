@@ -37,20 +37,20 @@ public class Turret : MonoBehaviour
 
     void FireAtNearestEnemy()
     {
-        // En yakındaki düşmanı bul
-        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
-        GameObject nearestEnemy = null;
+        // En yakındaki düşmanı bul (Sıfır çöp / Zero-Alloc)
+        Enemy nearestEnemy = null;
         float minSqrDistance = range * range;
 
-        foreach (GameObject enemyObj in enemies)
+        for (int i = 0; i < Enemy.ActiveEnemies.Count; i++)
         {
-            if (!enemyObj.activeInHierarchy) continue;
+            Enemy enemy = Enemy.ActiveEnemies[i];
+            if (enemy == null || !enemy.gameObject.activeInHierarchy) continue;
 
-            float sqrDist = (transform.position - enemyObj.transform.position).sqrMagnitude;
+            float sqrDist = (transform.position - enemy.transform.position).sqrMagnitude;
             if (sqrDist < minSqrDistance)
             {
                 minSqrDistance = sqrDist;
-                nearestEnemy = enemyObj;
+                nearestEnemy = enemy;
             }
         }
 

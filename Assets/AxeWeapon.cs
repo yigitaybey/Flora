@@ -123,44 +123,33 @@ public class AxeWeapon : MonoBehaviour
 
     void CheckAxeCollisions()
     {
-        // Her kare "FindGameObjectsWithTag" yapmak performansı düşürür, bu yüzden Havuzu (Pool) kullanıyoruz
-        List<GameObject> enemies;
-        if (EnemyPool.Instance != null)
-        {
-            enemies = EnemyPool.Instance.GetAllActiveEnemies();
-        }
-        else
-        {
-            enemies = new List<GameObject>(GameObject.FindGameObjectsWithTag("Enemy"));
-        }
-
         float hitRadiusSqr = hitArea * hitArea;
+        float finalDamage = damage * (UpgradeManager.Instance != null ? UpgradeManager.Instance.globalDamageMultiplier : 1f);
 
-        foreach (GameObject enemyObj in enemies)
+        for (int i = 0; i < Enemy.ActiveEnemies.Count; i++)
         {
-            if (enemyObj == null || !enemyObj.activeInHierarchy) continue;
+            Enemy enemyScript = Enemy.ActiveEnemies[i];
+            if (enemyScript == null || !enemyScript.gameObject.activeInHierarchy) continue;
 
-            foreach (Transform axe in activeAxes)
+            for (int a = 0; a < activeAxes.Count; a++)
             {
+                Transform axe = activeAxes[a];
+                if (axe == null) continue;
+
                 // Sapı değil, dışarıdaki metal kafa ucunun dünyadaki gerçek noktasını alıyoruz
                 Vector3 bladeWorldPos = GetBladeWorldPosition(axe);
-                float sqrDistance = (bladeWorldPos - enemyObj.transform.position).sqrMagnitude;
+                float sqrDistance = (bladeWorldPos - enemyScript.transform.position).sqrMagnitude;
                 
                 if (sqrDistance <= hitRadiusSqr)
                 {
+                    GameObject enemyObj = enemyScript.gameObject;
                     // Düşman baltaya DEĞDİ! Soğuma (Cooldown) kontrolü yap:
                     if (!enemyLastHitTime.ContainsKey(enemyObj) || Time.time >= enemyLastHitTime[enemyObj] + tickRate)
                     {
-                        Enemy enemyScript = enemyObj.GetComponent<Enemy>();
-                        if (enemyScript != null)
-                        {
-                            // Global hasar çarpanını dahil et
-                            float finalDamage = damage * UpgradeManager.Instance.globalDamageMultiplier;
-                            enemyScript.TakeDamage(finalDamage);
-                            
-                            // Bu düşmanın hasar yediği anı kaydet (Cooldown başlasın)
-                            enemyLastHitTime[enemyObj] = Time.time;
-                        }
+                        enemyScript.TakeDamage(finalDamage);
+                        
+                        // Bu düşmanın hasar yediği anı kaydet (Cooldown başlasın)
+                        enemyLastHitTime[enemyObj] = Time.time;
                     }
                 }
             }

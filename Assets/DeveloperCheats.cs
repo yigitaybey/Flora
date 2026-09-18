@@ -19,7 +19,7 @@ public class DeveloperCheats : MonoBehaviour
     private float fpsDeltaTime = 0f;
 
     // Bildirim Toast Mesajı
-    private string lastMessage = "Dev Konsolu Hazır. (Kısayollar: G, K, L, P, H, T, B, F1)";
+    private string lastMessage = "Dev Console Ready. (Hotkeys: G, K, L, P, H, T, B, F1)";
     private float messageTimer = 4f;
 
     // GUI Stilleri
@@ -155,7 +155,7 @@ public class DeveloperCheats : MonoBehaviour
     public void ToggleMenu()
     {
         showMenu = !showMenu;
-        ShowToast(showMenu ? "🛠️ Dev Konsolu Açıldı" : "🛠️ Dev Konsolu Kapatıldı");
+        ShowToast(showMenu ? "🛠️ Dev Console Opened" : "🛠️ Dev Console Closed");
     }
 
     public void ToggleGodMode()
@@ -163,7 +163,7 @@ public class DeveloperCheats : MonoBehaviour
         isGodMode = !isGodMode;
         PlayerHealth player = FindFirstObjectByType<PlayerHealth>();
         if (player != null) player.isGodMode = isGodMode;
-        ShowToast(isGodMode ? "🛡️ GOD MODE: AÇIK (Ölümsüzlük Aktif)" : "🛡️ GOD MODE: KAPALI");
+        ShowToast(isGodMode ? "🛡️ GOD MODE: ON (Invincible)" : "🛡️ GOD MODE: OFF");
     }
 
     public void KillAllEnemies()
@@ -184,11 +184,11 @@ public class DeveloperCheats : MonoBehaviour
                     obj.SetActive(false);
                 }
             }
-            ShowToast($"💀 {count} Adet Düşman Yok Edildi!");
+            ShowToast($"💀 {count} Enemies Destroyed!");
         }
         else
         {
-            ShowToast("⚠️ EnemyPool bulunamadı!");
+            ShowToast("⚠️ EnemyPool not found!");
         }
     }
 
@@ -197,11 +197,11 @@ public class DeveloperCheats : MonoBehaviour
         if (ExperienceManager.Instance != null)
         {
             ExperienceManager.Instance.ForceLevelUp();
-            ShowToast("⬆️ +1 Seviye Atlandı! Yetenek Seçimi Açıldı.");
+            ShowToast("⬆️ +1 Level Up! Skill Selection Opened.");
         }
         else
         {
-            ShowToast("⚠️ Sahnede ExperienceManager yok!");
+            ShowToast("⚠️ ExperienceManager missing in scene!");
         }
     }
 
@@ -210,12 +210,12 @@ public class DeveloperCheats : MonoBehaviour
         if (GameManager.Instance != null)
         {
             GameManager.Instance.AddCoreSeed(amount);
-            ShowToast($"💰 +{amount} Çekirdek Tohum (Para) Eklendi!");
+            ShowToast($"💰 +{amount} Core Seeds Added!");
             if (BaseUIManager.Instance != null) BaseUIManager.Instance.UpdateCurrencyUI();
         }
         else
         {
-            ShowToast($"💰 +{amount} Tohum Eklendi (GameManager Yok)");
+            ShowToast($"💰 +{amount} Seeds Added (No GameManager)");
         }
     }
 
@@ -224,12 +224,12 @@ public class DeveloperCheats : MonoBehaviour
         if (GameManager.Instance != null)
         {
             GameManager.Instance.ResetAllSeeds();
-            ShowToast("🧹 Tohumlar Sıfırlandı (0 Seed)!");
+            ShowToast("🧹 Seeds Reset (0 Seeds)!");
             if (BaseUIManager.Instance != null) BaseUIManager.Instance.UpdateCurrencyUI();
         }
         else
         {
-            ShowToast("🧹 Tohumlar Sıfırlandı!");
+            ShowToast("🧹 Seeds Reset!");
         }
     }
 
@@ -239,11 +239,11 @@ public class DeveloperCheats : MonoBehaviour
         if (player != null)
         {
             player.Heal(player.maxHealth);
-            ShowToast("🏥 Can Tamamen Fullendi (100/100)!");
+            ShowToast("🏥 Health Fully Restored (100/100)!");
         }
         else
         {
-            ShowToast("⚠️ Sahnede Sylva / PlayerHealth bulunamadı!");
+            ShowToast("⚠️ Sylva / PlayerHealth not found in scene!");
         }
     }
 
@@ -253,11 +253,11 @@ public class DeveloperCheats : MonoBehaviour
         if (spawner != null)
         {
             spawner.AddSeconds(seconds);
-            ShowToast($"⏩ Süre +{seconds:F0}sn İleri Sarıldı! (Wave: {EnemySpawner.CurrentWave})");
+            ShowToast($"⏩ Fast-Forwarded +{seconds:F0}s! (Wave: {EnemySpawner.CurrentWave})");
         }
         else
         {
-            ShowToast("⚠️ Sahnede EnemySpawner bulunamadı!");
+            ShowToast("⚠️ EnemySpawner not found in scene!");
         }
     }
 
@@ -267,11 +267,11 @@ public class DeveloperCheats : MonoBehaviour
         if (spawner != null)
         {
             spawner.JumpToBoss();
-            ShowToast("🌲 WAVE 20: BOSS (CHINAR) İNDİRİLDİ!");
+            ShowToast("🌲 BOSS (CHINAR) SPAWNED!");
         }
         else
         {
-            ShowToast("⚠️ EnemySpawner bulunamadı!");
+            ShowToast("⚠️ EnemySpawner not found!");
         }
     }
 
@@ -284,7 +284,7 @@ public class DeveloperCheats : MonoBehaviour
         {
             spawner.gameSpeedMultiplier = speed;
         }
-        ShowToast($"⚡ Oyun Hızı: {speed}x");
+        ShowToast($"⚡ Game Speed: {speed}x");
     }
 
     void ShowToast(string message)
@@ -357,7 +357,7 @@ public class DeveloperCheats : MonoBehaviour
         // 1. Ekrandaki Küçük Şık [⚡ DEV] Açma/Kapama Butonu (Sol altta, yazıları kapatmaz)
         if (showFloatingDevButton)
         {
-            if (GUI.Button(new Rect(15, Screen.height - 50, 80, 28), showMenu ? "❌ KAPAT" : "⚡ DEV", showMenu ? warningButtonStyle : activeButtonStyle))
+            if (GUI.Button(new Rect(15, Screen.height - 50, 80, 28), showMenu ? "❌ CLOSE" : "⚡ DEV", showMenu ? warningButtonStyle : activeButtonStyle))
             {
                 ToggleMenu();
             }
@@ -383,7 +383,7 @@ public class DeveloperCheats : MonoBehaviour
         GUILayout.Space(5);
 
         // --- İSTATİSTİKLER PANELİ ---
-        GUILayout.Label("📊 CANLI DURUM & PERFORMANS", headerStyle);
+        GUILayout.Label("📊 LIVE STATS & PERFORMANCE", headerStyle);
         
         string fpsColor = fps >= 45 ? "<color=#4dff88>" : (fps >= 25 ? "<color=#ffea4d>" : "<color=#ff4d4d>");
         int activeEnemies = EnemyPool.Instance != null ? EnemyPool.Instance.GetActiveEnemyCount() : 0;
@@ -394,66 +394,66 @@ public class DeveloperCheats : MonoBehaviour
         int seeds = GameManager.Instance != null ? (GameManager.Instance.coreSeedCount + GameManager.Instance.currentRunCoreSeedCount) : 0;
 
         PlayerHealth player = FindFirstObjectByType<PlayerHealth>();
-        string hpText = player != null ? $"{player.name}: Canlı" : "Karakter Yok";
+        string hpText = player != null ? $"{player.name}: Alive" : "No Player";
 
-        GUILayout.Label($"FPS: {fpsColor}{fps:F0}</color> | Düşman: <b>{activeEnemies}</b> | Wave: <b>{currentWave}</b> ({mins:00}:{secs:00})", statLabelStyle);
-        GUILayout.Label($"Bakiye: <b>{seeds}</b> Tohum | Durum: <b>{hpText}</b>", statLabelStyle);
+        GUILayout.Label($"FPS: {fpsColor}{fps:F0}</color> | Enemies: <b>{activeEnemies}</b> | Wave: <b>{currentWave}</b> ({mins:00}:{secs:00})", statLabelStyle);
+        GUILayout.Label($"Balance: <b>{seeds}</b> Seeds | Status: <b>{hpText}</b>", statLabelStyle);
 
         GUILayout.Space(8);
-        GUILayout.Label("⚡ HIZLI HİLELER & AKSİYONLAR", headerStyle);
+        GUILayout.Label("⚡ QUICK CHEATS & ACTIONS", headerStyle);
 
         // God Mode Butonu
         GUIStyle godBtnStyle = isGodMode ? activeButtonStyle : buttonStyle;
-        string godBtnText = isGodMode ? "🛡️ GOD MODE: AKTİF [G]" : "🛡️ GOD MODE: KAPALI [G]";
+        string godBtnText = isGodMode ? "🛡️ GOD MODE: ON [G]" : "🛡️ GOD MODE: OFF [G]";
         if (GUILayout.Button(godBtnText, godBtnStyle, GUILayout.Height(28)))
         {
             ToggleGodMode();
         }
 
         // Kill All Butonu
-        if (GUILayout.Button("💀 TÜM DÜŞMANLARI YOK ET [K]", warningButtonStyle, GUILayout.Height(28)))
+        if (GUILayout.Button("💀 KILL ALL ENEMIES [K]", warningButtonStyle, GUILayout.Height(28)))
         {
             KillAllEnemies();
         }
 
         // Level Up Butonu
-        if (GUILayout.Button("⬆️ ANINDA SEVİYE ATLA (+1 LEVEL) [L]", buttonStyle, GUILayout.Height(28)))
+        if (GUILayout.Button("⬆️ INSTANT LEVEL UP (+1) [L]", buttonStyle, GUILayout.Height(28)))
         {
             ForceLevelUp();
         }
 
         // Para Ekle / Sıfırla Butonları
         GUILayout.BeginHorizontal();
-        if (GUILayout.Button("💰 +1000 TOHUM [P]", buttonStyle, GUILayout.Height(28)))
+        if (GUILayout.Button("💰 +1000 SEEDS [P]", buttonStyle, GUILayout.Height(28)))
         {
             AddMoney(1000);
         }
-        if (GUILayout.Button("🧹 SIFIRLA (0 SEED)", warningButtonStyle, GUILayout.Height(28)))
+        if (GUILayout.Button("🧹 RESET (0 SEEDS)", warningButtonStyle, GUILayout.Height(28)))
         {
             ResetMoney();
         }
         GUILayout.EndHorizontal();
 
         // Full Heal Butonu
-        if (GUILayout.Button("🏥 CANI FULLE (100/100) [H]", buttonStyle, GUILayout.Height(28)))
+        if (GUILayout.Button("🏥 FULL HEAL (100/100) [H]", buttonStyle, GUILayout.Height(28)))
         {
             FullHeal();
         }
 
         // +60sn İleri Sar
-        if (GUILayout.Button("⏩ +60 SANİYE İLERİ SAR (2 DALGA) [T]", buttonStyle, GUILayout.Height(28)))
+        if (GUILayout.Button("⏩ FAST FORWARD +60s [T]", buttonStyle, GUILayout.Height(28)))
         {
             AddTime(60f);
         }
 
-        // Wave 20 Boss Çağır
-        if (GUILayout.Button("🌲 DİREKT WAVE 20: BOSS ÇAĞIR [B]", activeButtonStyle, GUILayout.Height(28)))
+        // Boss Çağır
+        if (GUILayout.Button("🌲 SPAWN BOSS (CHINAR) [B]", activeButtonStyle, GUILayout.Height(28)))
         {
             SpawnBoss();
         }
 
         GUILayout.Space(6);
-        GUILayout.Label("⏱️ OYUN HIZI (GAME SPEED)", headerStyle);
+        GUILayout.Label("⏱️ GAME SPEED", headerStyle);
         GUILayout.BeginHorizontal();
         if (GUILayout.Button("1x", customGameSpeed == 1f ? activeButtonStyle : buttonStyle, GUILayout.Height(24))) SetSpeed(1f);
         if (GUILayout.Button("2x", customGameSpeed == 2f ? activeButtonStyle : buttonStyle, GUILayout.Height(24))) SetSpeed(2f);
@@ -462,21 +462,21 @@ public class DeveloperCheats : MonoBehaviour
         GUILayout.EndHorizontal();
 
         GUILayout.Space(6);
-        if (GUILayout.Button("🚪 BASE'E DÖN (END RUN)", buttonStyle, GUILayout.Height(24)))
+        if (GUILayout.Button("🚪 RETURN TO BASE (END RUN)", buttonStyle, GUILayout.Height(24)))
         {
             if (GameManager.Instance != null) GameManager.Instance.LoadBaseScene();
         }
 
         GUILayout.Space(6);
-        GUILayout.Label("📳 TİTREŞİM & SARSINTI TESTİ", headerStyle);
+        GUILayout.Label("📳 HAPTICS & SCREEN SHAKE TEST", headerStyle);
         GUILayout.BeginHorizontal();
-        if (GUILayout.Button("Hafif", buttonStyle, GUILayout.Height(24))) { HapticFeedback.TriggerLight(); ShowToast("📳 Hafif Titreşim"); }
-        if (GUILayout.Button("Orta", buttonStyle, GUILayout.Height(24))) { HapticFeedback.TriggerMedium(); ShowToast("📳 Orta Titreşim (Hasar)"); }
-        if (GUILayout.Button("Güçlü", buttonStyle, GUILayout.Height(24))) { HapticFeedback.TriggerHeavy(); ShowToast("📳 Güçlü Titreşim (Level/Ölüm)"); }
-        if (GUILayout.Button("Sarsıntı", activeButtonStyle, GUILayout.Height(24))) 
+        if (GUILayout.Button("Light", buttonStyle, GUILayout.Height(24))) { HapticFeedback.TriggerLight(); ShowToast("📳 Light Haptic"); }
+        if (GUILayout.Button("Medium", buttonStyle, GUILayout.Height(24))) { HapticFeedback.TriggerMedium(); ShowToast("📳 Medium Haptic (Damage)"); }
+        if (GUILayout.Button("Heavy", buttonStyle, GUILayout.Height(24))) { HapticFeedback.TriggerHeavy(); ShowToast("📳 Heavy Haptic (Level/Death)"); }
+        if (GUILayout.Button("Shake", activeButtonStyle, GUILayout.Height(24))) 
         { 
             if (CameraFollow.Instance != null) CameraFollow.Instance.Shake(0.3f, 0.4f); 
-            ShowToast("📳 Ekran Sarsıldı (Screen Shake)"); 
+            ShowToast("📳 Screen Shake Triggered"); 
         }
         GUILayout.EndHorizontal();
 

@@ -126,15 +126,20 @@ public class PlayerMovement : MonoBehaviour
         }
         else if (boundaryType == BoundaryType.NavMesh)
         {
-            // NavMesh sınır: Karakter adanın dışına çıkarsa en yakın geçerli zemine yapıştır
+            // NavMesh sınır: Karakterin harita dışına çıkmasını engeller
+            // 1.5f arama yarıçapı zemin eğimlerinde veya karakterin -1 olan Y yüksekliğinde false verip oyuncuyu kilitliyordu.
+            // Yarıçapı 5.0f yaparak ve Y toleransını düzelterek görünmez duvar hissini tamamen kaldırdık!
             UnityEngine.AI.NavMeshHit hit;
-            if (UnityEngine.AI.NavMesh.SamplePosition(transform.position, out hit, 1.5f, UnityEngine.AI.NavMesh.AllAreas))
+            Vector3 testPos = new Vector3(transform.position.x, previousValidPosition.y, transform.position.z);
+            if (UnityEngine.AI.NavMesh.SamplePosition(testPos, out hit, 5.0f, UnityEngine.AI.NavMesh.AllAreas))
             {
-                transform.position = hit.position;
-                previousValidPosition = hit.position;
+                // Karakteri zemine oturt
+                transform.position = new Vector3(transform.position.x, hit.position.y, transform.position.z);
+                previousValidPosition = transform.position;
             }
             else
             {
+                // Yalnızca harita sınırının tamamen dışına çıkıldıysa geri çek
                 transform.position = previousValidPosition;
             }
         }

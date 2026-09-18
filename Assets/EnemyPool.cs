@@ -83,41 +83,25 @@ public class EnemyPool : MonoBehaviour
         return null;
     }
 
-    // Ekrandaki aktif (canlı) düşman sayısını döndürür (FPS Hard Cap kontrolü için)
+    private List<GameObject> cachedActiveList = new List<GameObject>(256);
+
+    // Ekrandaki aktif (canlı) düşman sayısını anında döndürür (O(1) masrafsız)
     public int GetActiveEnemyCount()
     {
-        int count = 0;
-        if (pools == null) return count;
-
-        foreach (var list in pools.Values)
-        {
-            foreach (GameObject obj in list)
-            {
-                if (obj.activeInHierarchy)
-                {
-                    count++;
-                }
-            }
-        }
-        return count;
+        return Enemy.ActiveEnemies.Count;
     }
 
-    // Sahnedeki tüm aktif düşmanların listesini döndürür (FPS dostu işlem için)
+    // Sahnedeki tüm aktif düşmanların GameObject listesini sıfır çöp (zero-alloc) ile döndürür
     public List<GameObject> GetAllActiveEnemies()
     {
-        List<GameObject> activeEnemies = new List<GameObject>();
-        if (pools == null) return activeEnemies;
-
-        foreach (var list in pools.Values)
+        cachedActiveList.Clear();
+        for (int i = 0; i < Enemy.ActiveEnemies.Count; i++)
         {
-            foreach (GameObject obj in list)
+            if (Enemy.ActiveEnemies[i] != null)
             {
-                if (obj.activeInHierarchy)
-                {
-                    activeEnemies.Add(obj);
-                }
+                cachedActiveList.Add(Enemy.ActiveEnemies[i].gameObject);
             }
         }
-        return activeEnemies;
+        return cachedActiveList;
     }
 }

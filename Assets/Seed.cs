@@ -3,7 +3,7 @@ using UnityEngine;
 public class Seed : MonoBehaviour
 {
     [Header("Tohum Ayarları")]
-    public float baseXpAmount = 10f; // Temel XP (Curse ile çarpılacak)
+    public float baseXpAmount = 15f; // Temel XP (Curse ile çarpılacak, 10'dan 15'e çıkarıldı)
     public float magnetSpeed = 8f; // Çekilme hızı
     
     private Transform playerTransform;

@@ -74,8 +74,8 @@ public class BaseUIManager : MonoBehaviour
     {
         if (GameManager.Instance != null)
         {
-            if (txtCoreCount != null) txtCoreCount.text = "Kule Çekirdeği: " + GameManager.Instance.towerCoreCount;
-            if (txtSeedCount != null) txtSeedCount.text = "Tohum: " + GameManager.Instance.coreSeedCount;
+            if (txtCoreCount != null) txtCoreCount.text = "Tower Core: " + GameManager.Instance.towerCoreCount;
+            if (txtSeedCount != null) txtSeedCount.text = "Seeds: " + GameManager.Instance.coreSeedCount;
         }
     }
 

@@ -78,19 +78,19 @@ public class FlamethrowerWeapon : MonoBehaviour
 
     void HandleTargetingAndVisuals()
     {
-        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
-        GameObject nearestEnemy = null;
+        Enemy nearestEnemy = null;
         float minSqrDistance = range * range;
 
-        foreach (GameObject enemyObj in enemies)
+        for (int i = 0; i < Enemy.ActiveEnemies.Count; i++)
         {
-            if (!enemyObj.activeInHierarchy) continue;
+            Enemy enemy = Enemy.ActiveEnemies[i];
+            if (enemy == null || !enemy.gameObject.activeInHierarchy) continue;
 
-            float sqrDist = (transform.position - enemyObj.transform.position).sqrMagnitude;
+            float sqrDist = (transform.position - enemy.transform.position).sqrMagnitude;
             if (sqrDist < minSqrDistance)
             {
                 minSqrDistance = sqrDist;
-                nearestEnemy = enemyObj;
+                nearestEnemy = enemy;
             }
         }
 
@@ -121,14 +121,15 @@ public class FlamethrowerWeapon : MonoBehaviour
 
     void DealDamageInCone()
     {
-        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
         float sqrRange = range * range;
+        float finalDamage = damagePerTick * (UpgradeManager.Instance != null ? UpgradeManager.Instance.globalDamageMultiplier : 1f);
         
-        foreach (GameObject enemyObj in enemies)
+        for (int i = 0; i < Enemy.ActiveEnemies.Count; i++)
         {
-            if (!enemyObj.activeInHierarchy) continue;
+            Enemy enemyScript = Enemy.ActiveEnemies[i];
+            if (enemyScript == null || !enemyScript.gameObject.activeInHierarchy) continue;
 
-            Vector3 directionToEnemy = (enemyObj.transform.position - transform.position);
+            Vector3 directionToEnemy = (enemyScript.transform.position - transform.position);
             directionToEnemy.y = 0; 
 
             float sqrDistanceToEnemy = directionToEnemy.sqrMagnitude;
@@ -139,18 +140,12 @@ public class FlamethrowerWeapon : MonoBehaviour
 
                 if (angle <= coneAngle / 2f)
                 {
-                    Enemy enemyScript = enemyObj.GetComponent<Enemy>();
-                    if (enemyScript != null)
+                    enemyScript.TakeDamage(finalDamage);
+                    
+                    // MAX Level (8) ise "Yanık Toprak" (Burning) etkisi uygula
+                    if (currentLevel >= 8)
                     {
-                        // Global hasar çarpanını dahil et
-                        float finalDamage = damagePerTick * UpgradeManager.Instance.globalDamageMultiplier;
-                        enemyScript.TakeDamage(finalDamage);
-                        
-                        // MAX Level (8) ise "Yanık Toprak" (Burning) etkisi uygula
-                        if (currentLevel >= 8)
-                        {
-                            enemyScript.ApplyBurn(finalDamage / 2f, 3f);
-                        }
+                        enemyScript.ApplyBurn(finalDamage / 2f, 3f);
                     }
                 }
             }

@@ -158,21 +158,19 @@ public class PollenWeapon : MonoBehaviour
 
     GameObject FindNearestEnemy()
     {
-        if (EnemyPool.Instance == null) return null;
-
-        List<GameObject> enemies = EnemyPool.Instance.GetAllActiveEnemies();
         GameObject nearest = null;
         float minSqrDistance = range * range;
 
-        foreach (GameObject enemyObj in enemies)
+        for (int i = 0; i < Enemy.ActiveEnemies.Count; i++)
         {
-            if (enemyObj == null || !enemyObj.activeInHierarchy) continue;
+            Enemy enemy = Enemy.ActiveEnemies[i];
+            if (enemy == null || !enemy.gameObject.activeInHierarchy) continue;
 
-            float sqrDist = (transform.position - enemyObj.transform.position).sqrMagnitude;
+            float sqrDist = (transform.position - enemy.transform.position).sqrMagnitude;
             if (sqrDist < minSqrDistance)
             {
                 minSqrDistance = sqrDist;
-                nearest = enemyObj;
+                nearest = enemy.gameObject;
             }
         }
 

@@ -23,6 +23,11 @@ public class GameManager : MonoBehaviour
 
     void Awake()
     {
+        // Mobil 60 FPS Kilidi ve Ekran Kararmasını Engelleme (Optimizasyon)
+        Application.targetFrameRate = 60;
+        QualitySettings.vSyncCount = 0;
+        Screen.sleepTimeout = SleepTimeout.NeverSleep;
+
         // Singleton Pattern (Sahneler arası silinmez)
         if (Instance == null)
         {

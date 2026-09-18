@@ -8,7 +8,7 @@ public class ExperienceManager : MonoBehaviour
 
     [Header("Deneyim (XP) Ayarları")]
     public float currentXP = 0f;
-    public float requiredXP = 100f; // Level 2 için gereken ilk XP
+    public float requiredXP = 30f; // Level 2 için gereken ilk XP (Hızlı ve akıcı başlangıç için 30'a çekildi)
     public int currentLevel = 1;
 
     [Header("Arayüz (UI) Bağlantıları")]
@@ -29,6 +29,7 @@ public class ExperienceManager : MonoBehaviour
 
     void Start()
     {
+        requiredXP = 30f; // 5 dakikalık run için ilk seviye barajı
         UpdateUI();
         if (levelUpPanel != null)
         {
@@ -66,9 +67,13 @@ public class ExperienceManager : MonoBehaviour
     {
         currentLevel++;
         currentXP -= requiredXP; // Kalan (artan) XP'yi silme, bir sonraki levele aktar
-        requiredXP = 100f + (currentLevel * 30f); // Düşman sayısı çok arttığı için XP eğrisi dengelendi
         
-        Debug.Log("LEVEL ATLADIN! Yeni Level: " + currentLevel);
+        // 5 dakikalık run için ALTIN ORTA (Sweet Spot) seviye eğrisi:
+        // Başlangıç seri akar, 5. seviyeden sonra dengeli yükselir.
+        // Oyuncu 5. dakikada Boss Chinar'a vardığında ortalama 13-15 seviye olur (Ne zayıf ne de aşırı OP).
+        requiredXP = 20f + (currentLevel * 22f);
+        
+        Debug.Log("LEVEL ATLADIN! Yeni Level: " + currentLevel + " | Sonraki Level İçin Gereken XP: " + requiredXP);
         
         // Seviye atlama anında tatmin edici mobil titreşim
         HapticFeedback.TriggerHeavy();

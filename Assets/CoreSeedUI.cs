@@ -40,7 +40,7 @@ public class CoreSeedUI : MonoBehaviour
                 count = CoreSeed.fallbackRunCount;
             }
             
-            coreSeedText.text = "Tohum: " + count.ToString();
+            coreSeedText.text = "Seeds: " + count.ToString();
         }
     }
 }

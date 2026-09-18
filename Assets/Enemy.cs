@@ -54,6 +54,23 @@ public class Enemy : MonoBehaviour
     [Header("Animasyon")]
     public Animator animator;
 
+    // --- SIFIR BELLEK ÇÖPÜ (ZERO-ALLOC) OPTİMİZASYONU ---
+    // Sahnedeki aktif yaşayan tüm düşmanların listesi (FindGameObjectsWithTag yerine kullanılır)
+    public static readonly System.Collections.Generic.List<Enemy> ActiveEnemies = new System.Collections.Generic.List<Enemy>(256);
+
+    void OnEnable()
+    {
+        if (!ActiveEnemies.Contains(this))
+        {
+            ActiveEnemies.Add(this);
+        }
+    }
+
+    void OnDisable()
+    {
+        ActiveEnemies.Remove(this);
+    }
+
     void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
@@ -74,17 +91,18 @@ public class Enemy : MonoBehaviour
         // Düşman canını artık oyuncunun Level'ına değil, bulunulan Dalga (Wave) sayısına göre artırıyoruz
         int currentWave = EnemySpawner.CurrentWave;
         
-        // Boss için özel can havuzu (Test için sabit veya katlamalı)
+        // Boss için özel can havuzu (useFixedBossHealth true ise direkt sabit bossBaseHealth)
         if (enemyType == EnemyType.Chinar)
         {
-            currentMaxHealth = useFixedBossHealth ? bossBaseHealth : (bossBaseHealth * Mathf.Pow(1.15f, currentWave));
+            currentMaxHealth = useFixedBossHealth ? bossBaseHealth : (bossBaseHealth * Mathf.Pow(1.06f, currentWave));
         }
         else
         {
-            currentMaxHealth = baseMaxHealth * Mathf.Pow(1.15f, currentWave);
+            // Dengeli can artışı: her wave %8 artış (Vampire Survivors tarzı akıcı his)
+            currentMaxHealth = baseMaxHealth * Mathf.Pow(1.08f, currentWave);
         }
         
-        // Eğer Elite ise canı 2 katına çıkar (Önceden 3 kattı, çok dayanıklı olduğu için 2'ye çektim) ve boyutunu büyüt!
+        // Eğer Elite ise canı 2 katına çıkar ve boyutunu büyüt!
         if (isElite)
         {
             currentMaxHealth *= 2f;
@@ -97,8 +115,8 @@ public class Enemy : MonoBehaviour
 
         currentHealth = currentMaxHealth; // Doğduğunda canı fulle
         
-        // Hasarı da wave'e göre artır (Her wave %5 daha fazla hasar)
-        currentDamage = baseDamage * (1f + (currentWave * 0.05f));
+        // Hasarı da wave'e göre dengeli artır (Her wave %3 daha fazla hasar)
+        currentDamage = baseDamage * (1f + (currentWave * 0.03f));
         if (isElite) currentDamage *= 1.5f; // Elite'ler daha çok vurur
         
         playerTarget = target;
@@ -341,16 +359,22 @@ public class Enemy : MonoBehaviour
                 Seed seedScript = seedObj.GetComponent<Seed>();
                 if (seedScript != null)
                 {
-                    if (enemyType == EnemyType.Chinar || isElite)
+                    float xp = 15f; // Temel Moss ve SporeHead XP'si (10'dan 15'e çıkarıldı)
+                    if (enemyType == EnemyType.Wolfey) xp = 20f;
+                    else if (enemyType == EnemyType.Iyv) xp = 25f;
+                    else if (enemyType == EnemyType.Chinar) xp = 150f;
+
+                    if (isElite)
                     {
-                        seedScript.baseXpAmount = 50f;
+                        xp *= 3f; // Elite mini-boss'lar devasa XP ödülü verir
                         seedObj.transform.localScale = new Vector3(2f, 2f, 2f); 
                     }
                     else
                     {
-                        seedScript.baseXpAmount = 10f; 
                         seedObj.transform.localScale = Vector3.one; 
                     }
+
+                    seedScript.baseXpAmount = xp;
                 }
                 
                 seedObj.SetActive(true);

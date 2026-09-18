@@ -126,7 +126,7 @@ public class CombatUIManager : MonoBehaviour
 
         if (deathLootText != null)
         {
-            deathLootText.text = "Toplanan Tohum: " + runLoot.ToString();
+            deathLootText.text = "Seeds Collected: " + runLoot.ToString();
         }
 
         if (deathPanel != null)
@@ -157,7 +157,7 @@ public class CombatUIManager : MonoBehaviour
 
         if (winLootText != null)
         {
-            winLootText.text = "Toplanan Tohum: " + runLoot.ToString();
+            winLootText.text = "Seeds Collected: " + runLoot.ToString();
         }
 
         if (winPanel != null)
@@ -188,7 +188,7 @@ public class CombatUIManager : MonoBehaviour
     public void WatchAdForDoubleLoot()
     {
         // Şimdilik reklam izlenmiş gibi kabul edip tohumu ikiye katlıyoruz
-        Debug.Log("Reklam İzlendi! Tohumlar 2'ye Katlanıyor...");
+        Debug.Log("Ad Watched! Seeds doubled...");
 
         if (GameManager.Instance != null)
         {
@@ -202,8 +202,8 @@ public class CombatUIManager : MonoBehaviour
         }
 
         // Metinleri ekranda güncelle
-        if (deathLootText != null) deathLootText.text = "Toplanan Tohum: " + runLoot.ToString();
-        if (winLootText != null) winLootText.text = "Toplanan Tohum: " + runLoot.ToString();
+        if (deathLootText != null) deathLootText.text = "Seeds Collected: " + runLoot.ToString();
+        if (winLootText != null) winLootText.text = "Seeds Collected: " + runLoot.ToString();
 
         // Reklam butonunu gizle ki oyuncu 2. kez basıp hile yapamasın
         if (deathDoubleLootButtonObj != null) deathDoubleLootButtonObj.SetActive(false);

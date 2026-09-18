@@ -141,95 +141,95 @@ public class UpgradeManager : MonoBehaviour
         {
             // YEDEK / TEKRARLANABİLİR
             case UpgradeType.HealPotion:
-                return "İksir (Max Lvl Ödülü):\n+30 Can Yeniler";
+                return "Health Potion (Max Lvl Reward):\nRestores +30 HP";
 
             // PASİFLER
             case UpgradeType.UpgradeMagnet:
                 int nextMag = PlayerPassives.Instance.magnetLevel + 1;
-                return (nextMag == 1) ? "YENİ PASİF: Mıknatıs (Lvl 1)" : $"Mıknatıs (Lvl {nextMag}): Tohum Çekme Menzili Artar";
+                return (nextMag == 1) ? "NEW PASSIVE: Seed Magnet (Lvl 1)" : $"Seed Magnet (Lvl {nextMag}): Seed Collection Radius Increased";
             
             case UpgradeType.UpgradeLuck:
                 int nextLuck = PlayerPassives.Instance.luckLevel + 1;
-                return (nextLuck == 1) ? "YENİ PASİF: Şans (Lvl 1)" : $"Şans (Lvl {nextLuck}): Eşya/Taret Çıkma İhtimali Artar";
+                return (nextLuck == 1) ? "NEW PASSIVE: Luck (Lvl 1)" : $"Luck (Lvl {nextLuck}): Item & Turret Drop Rate Increased";
             
             case UpgradeType.UpgradeCurse:
                 int nextCurse = PlayerPassives.Instance.curseLevel + 1;
-                return (nextCurse == 1) ? "YENİ PASİF: Lanet (Lvl 1)" : $"Lanet (Lvl {nextCurse}): Düşman Sıklığı ve Düşen XP Artar";
+                return (nextCurse == 1) ? "NEW PASSIVE: Curse (Lvl 1)" : $"Curse (Lvl {nextCurse}): Enemy Density & Dropped XP Increased";
             
             case UpgradeType.UpgradeTurret:
                 int nextTurret = PlayerPassives.Instance.turretLevel + 1;
-                return (nextTurret == 1) ? "YENİ PASİF: Kök Taret (Lvl 1)" : $"Kök Taret (Lvl {nextTurret}): Taret Hasarı ve Süresi Uzar";
+                return (nextTurret == 1) ? "NEW PASSIVE: Root Turret (Lvl 1)" : $"Root Turret (Lvl {nextTurret}): Turret Damage & Duration Increased";
             
             case UpgradeType.UpgradeCrit:
                 int nextCrit = PlayerPassives.Instance.critLevel + 1;
-                return (nextCrit == 1) ? "YENİ PASİF: Ölümcül Odak (Lvl 1)\nKritik +%5" : $"Ölümcül Odak (Lvl {nextCrit}): Kritik İhtimali +%5 / Çarpan +0.125x";
+                return (nextCrit == 1) ? "NEW PASSIVE: Deadly Focus (Lvl 1)\nCrit Chance +5%" : $"Deadly Focus (Lvl {nextCrit}): Crit Chance +5% / Multiplier +0.125x";
 
 
             // POLLEN
-            case UpgradeType.UnlockPollen: return "YENİ SİLAH: Polen Enjektörü (Lvl 1)";
+            case UpgradeType.UnlockPollen: return "NEW WEAPON: Pollen Injector (Lvl 1)";
             case UpgradeType.UpgradePollen:
                 int nextPollenLevel = pollenWeapon.currentLevel + 1;
                 switch (nextPollenLevel)
                 {
-                    case 2: return "Polen (Lvl 2): Atış Hızı +%15";
-                    case 3: return "Polen (Lvl 3): Hasar +%20 | SİNERJİ: Max Can +10";
-                    case 4: return "Polen (Lvl 4): V Şeklinde 3 Mermi";
-                    case 5: return "Polen (Lvl 5): Mermi Hızı ve Menzili +%20";
-                    case 6: return "Polen (Lvl 6): Hasar +%25 | SİNERJİ: Max Can +20";
-                    case 7: return "Polen (Lvl 7): Atış Hızı +%25";
-                    case 8: return "Polen (MAX): 5 Delici Mermi | SİNERJİ: Max Can +20";
-                    default: return "Polen Geliştirildi";
+                    case 2: return "Pollen (Lvl 2): Fire Rate +15%";
+                    case 3: return "Pollen (Lvl 3): Damage +20% | SYNERGY: Max HP +10";
+                    case 4: return "Pollen (Lvl 4): 3-Way Spread Projectiles";
+                    case 5: return "Pollen (Lvl 5): Projectile Speed & Range +20%";
+                    case 6: return "Pollen (Lvl 6): Damage +25% | SYNERGY: Max HP +20";
+                    case 7: return "Pollen (Lvl 7): Fire Rate +25%";
+                    case 8: return "Pollen (MAX): 5 Piercing Projectiles | SYNERGY: Max HP +20";
+                    default: return "Pollen Upgraded";
                 }
 
             // UV LAMP
-            case UpgradeType.UnlockUV: return "YENİ SİLAH: UV Lamba (Lvl 1)";
+            case UpgradeType.UnlockUV: return "NEW WEAPON: UV Lamp (Lvl 1)";
             case UpgradeType.UpgradeUV:
                 int nextUVLevel = uvWeapon.currentLevel + 1;
                 switch (nextUVLevel)
                 {
-                    case 2: return "UV Lamba (Lvl 2): Alan Hasarı +%25";
-                    case 3: return "UV Lamba (Lvl 3): Vuruş Sıklığı Artar | SİNERJİ: +0.5 Can Yenileme";
-                    case 4: return "UV Lamba (Lvl 4): Menzil (Çap) %50 Uzar";
-                    case 5: return "UV Lamba (Lvl 5): Alan Hasarı +%30";
-                    case 6: return "UV Lamba (Lvl 6): Menzil +%20 | SİNERJİ: +1 Can Yenileme";
-                    case 7: return "UV Lamba (Lvl 7): Vuruş Sıklığı Muazzam Artar";
-                    case 8: return "UV Lamba (MAX): %30 Yavaşlatma | SİNERJİ: +1.5 Can Yenileme";
-                    default: return "UV Lamba Geliştirildi";
+                    case 2: return "UV Lamp (Lvl 2): Area Damage +25%";
+                    case 3: return "UV Lamp (Lvl 3): Hit Frequency Increased | SYNERGY: +0.5 HP Regen";
+                    case 4: return "UV Lamp (Lvl 4): Aura Radius +50%";
+                    case 5: return "UV Lamp (Lvl 5): Area Damage +30%";
+                    case 6: return "UV Lamp (Lvl 6): Aura Radius +20% | SYNERGY: +1.0 HP Regen";
+                    case 7: return "UV Lamp (Lvl 7): Rapid Pulse Frequency";
+                    case 8: return "UV Lamp (MAX): 30% Slow Aura | SYNERGY: +1.5 HP Regen";
+                    default: return "UV Lamp Upgraded";
                 }
 
             // AXE
-            case UpgradeType.UnlockAxe: return "YENİ SİLAH: Dönen Balta (Lvl 1)";
+            case UpgradeType.UnlockAxe: return "NEW WEAPON: Orbiting Axe (Lvl 1)";
             case UpgradeType.UpgradeAxe:
                 int nextAxeLevel = axeWeapon.currentLevel + 1;
                 switch (nextAxeLevel)
                 {
-                    case 2: return "Balta (Lvl 2): Balta Hasarı +%25";
-                    case 3: return "Balta (Lvl 3): Dönüş Hızı +%20 | SİNERJİ: Hareket Hızı +%5";
-                    case 4: return "Balta (Lvl 4): Çift Balta (2 Adet)";
-                    case 5: return "Balta (Lvl 5): Balta Boyutu +%25";
-                    case 6: return "Balta (Lvl 6): Balta Hasarı +%30 | SİNERJİ: Hareket Hızı +%10";
-                    case 7: return "Balta (Lvl 7): Dönüş Hızı +%30";
-                    case 8: return "Balta (MAX): 4 Balta Kinetik Testere | SİNERJİ: Hız +%10";
-                    default: return "Balta Geliştirildi";
+                    case 2: return "Axe (Lvl 2): Axe Damage +25%";
+                    case 3: return "Axe (Lvl 3): Orbit Speed +20% | SYNERGY: Move Speed +5%";
+                    case 4: return "Axe (Lvl 4): Twin Orbiting Axes";
+                    case 5: return "Axe (Lvl 5): Axe Size +25%";
+                    case 6: return "Axe (Lvl 6): Axe Damage +30% | SYNERGY: Move Speed +10%";
+                    case 7: return "Axe (Lvl 7): Orbit Speed +30%";
+                    case 8: return "Axe (MAX): 4-Axe Kinetic Sawblade | SYNERGY: Move Speed +10%";
+                    default: return "Axe Upgraded";
                 }
 
             // FLAMETHROWER
-            case UpgradeType.UnlockFlamethrower: return "YENİ SİLAH: Alev Makinesi (Lvl 1)";
+            case UpgradeType.UnlockFlamethrower: return "NEW WEAPON: Flamethrower (Lvl 1)";
             case UpgradeType.UpgradeFlamethrower:
                 int nextFlameLevel = flamethrowerWeapon.currentLevel + 1;
                 switch (nextFlameLevel)
                 {
-                    case 2: return "Alev (Lvl 2): Bekleme Süresi -%20";
-                    case 3: return "Alev (Lvl 3): Hasar +%25 | SİNERJİ: Tüm Hasarlar +%10";
-                    case 4: return "Alev (Lvl 4): Menzil ve Hasar Uzar";
-                    case 5: return "Alev (Lvl 5): Alev Genişliği +%30";
-                    case 6: return "Alev (Lvl 6): Bekleme Süresi -%30 | SİNERJİ: Tüm Hasarlar +%10";
-                    case 7: return "Alev (Lvl 7): Alev Hasarı +%35";
-                    case 8: return "Alev (MAX): Yanık Toprak Efekti | SİNERJİ: Tüm Hasarlar +%15";
-                    default: return "Alev Geliştirildi";
+                    case 2: return "Flame (Lvl 2): Cooldown -20%";
+                    case 3: return "Flame (Lvl 3): Damage +25% | SYNERGY: All Damage +10%";
+                    case 4: return "Flame (Lvl 4): Range & Damage Extended";
+                    case 5: return "Flame (Lvl 5): Flame Cone +30%";
+                    case 6: return "Flame (Lvl 6): Cooldown -30% | SYNERGY: All Damage +10%";
+                    case 7: return "Flame (Lvl 7): Flame Damage +35%";
+                    case 8: return "Flame (MAX): Scorched Earth Ground Fire | SYNERGY: All Damage +15%";
+                    default: return "Flame Upgraded";
                 }
 
-            default: return "Bilinmeyen Yetenek";
+            default: return "Unknown Upgrade";
         }
     }
 

@@ -6,11 +6,11 @@ public class EnemySpawner : MonoBehaviour
 {
     [Header("Spawner Ayarları")]
     public Transform playerTarget;
-    public float baseSPS = 2.5f; // Saniyede doğan temel düşman sayısı (Horda hissi için 1'den 2.5'e çıkarıldı)
+    public float baseSPS = 1.1f; // Saniyede doğan temel düşman sayısı (Dengeli başlangıç için 1.1'e çekildi)
     public float spawnRadius = 25f;
     
     [Header("FPS Koruması")]
-    public int maxEnemiesOnScreen = 200; // Ekranda aynı anda en fazla kaç düşman olabilir
+    public int maxEnemiesOnScreen = 120; // Mobil performans ve adil oynanış için 120 sınırı
 
     [Header("Debug & Test Zaman Kontrolleri")]
     [Tooltip("Oyun hız çarpanı (1 = Normal, 2 = 2x Hızlı, 5 = 5x Hızlı)")]
@@ -59,7 +59,7 @@ public class EnemySpawner : MonoBehaviour
     {
         if (UnityEngine.InputSystem.Keyboard.current != null)
         {
-            // 'B' Tuşu: Direkt BOSS Dalgasına (Wave 20 - 580. saniyeye) Atla!
+            // 'B' Tuşu: Direkt BOSS Dalgasına (Wave 10 - 270. saniyeye) Atla!
             if (UnityEngine.InputSystem.Keyboard.current.bKey.wasPressedThisFrame)
             {
                 JumpToBoss();
@@ -80,8 +80,8 @@ public class EnemySpawner : MonoBehaviour
 
     public void JumpToBoss()
     {
-        GameTimer = 580f; // 19.33 dakika civarı -> Wave 20
-        Debug.Log("⏩ DEBUG: Direkt Wave 20 (BOSS CHINAR) Dalgasına Atlandı!");
+        GameTimer = 270f; // 4.5 dakika -> Wave 10 Final Boss
+        Debug.Log("⏩ DEBUG: Direkt Wave 10 (BOSS CHINAR) Dalgasına Atlandı!");
     }
 
     public void AddSeconds(float seconds)
@@ -110,15 +110,16 @@ public class EnemySpawner : MonoBehaviour
         if (playerTarget == null) return;
 
         // Oyun süresini say (Her 30 saniye = 1 Dalga/Wave)
+        // 10 Dalga x 30 saniye = 300 saniye (5 Dakika Toplam Run)
         GameTimer += Time.deltaTime;
-        CurrentWave = Mathf.FloorToInt(GameTimer / 30f) + 1; // 0-29sn = Wave 1, 30-59sn = Wave 2
+        CurrentWave = Mathf.FloorToInt(GameTimer / 30f) + 1; // 0-29sn = Wave 1, ..., 270sn+ = Wave 10 (Boss)
 
-        // --- BOSS KONTROLÜ (10. Dakika / Wave 20) ---
-        if (CurrentWave >= 20)
+        // --- BOSS KONTROLÜ (5. Dakika / Wave 10) ---
+        if (CurrentWave >= 10)
         {
             if (!bossSpawned)
             {
-                Debug.Log("WAVE 20! SAHA TEMİZLENİYOR, CHINAR GELİYOR!");
+                Debug.Log("WAVE 10 (FINAL BOSS)! SAHA TEMİZLENİYOR, CHINAR GELİYOR!");
                 ClearAllEnemies();
                 SpawnEnemy(EnemyType.Chinar);
                 bossSpawned = true;
@@ -126,13 +127,13 @@ public class EnemySpawner : MonoBehaviour
             return; // Boss indikten sonra normal düşman doğurmayı durdur
         }
 
-        // --- ELITE KONTROLÜ (Wave 5, 10, 15) ---
-        if (CurrentWave % 5 == 0 && CurrentWave != lastSpawnedEliteWave)
+        // --- ELITE KONTROLÜ (Wave 5: 2.5 Dakika Ara Kontrol Noktası) ---
+        if (CurrentWave == 5 && lastSpawnedEliteWave != 5)
         {
             EnemyType randomEliteType = DetermineEnemyTypeByWave();
             SpawnEnemy(randomEliteType, true); // true = isElite
-            lastSpawnedEliteWave = CurrentWave;
-            Debug.Log("ELITE DÜŞMAN İNDİ! Wave: " + CurrentWave);
+            lastSpawnedEliteWave = 5;
+            Debug.Log("ELITE MİNİ-BOSS İNDİ! Wave: " + CurrentWave);
         }
 
         // --- FPS HARD CAP (LIMIT) KONTROLÜ ---
@@ -141,8 +142,8 @@ public class EnemySpawner : MonoBehaviour
             return; // Sınır aşıldıysa yeni düşman doğurma (Sadece süre akar)
         }
 
-        // Anlık SPS (Saniyede doğan düşman) hesaplaması (Level yerine Wave kullanıyoruz)
-        float sps = baseSPS * Mathf.Pow(1.15f, CurrentWave);
+        // Anlık SPS (Saniyede doğan düşman) hesaplaması (Dengeli üstel artış: %12 her wave)
+        float sps = baseSPS * Mathf.Pow(1.12f, CurrentWave);
         
         // Lanet (Curse) çarpanını uygula (Daha fazla ve hızlı düşman)
         if (PlayerPassives.Instance != null)
@@ -164,25 +165,37 @@ public class EnemySpawner : MonoBehaviour
 
     EnemyType DetermineEnemyTypeByWave()
     {
-        if (CurrentWave >= 10 && CurrentWave < 20)
+        // Wave 1-2 (0-60s): Sadece temel Moss (Yeni başlayan oyuncu rahatça tohum toplar)
+        if (CurrentWave <= 2)
         {
-            // Wave 10-19: Moss, SporeHead, Wolfey, Iyv karışık
-            int rnd = Random.Range(0, 4); 
-            if (rnd == 0) return EnemyType.Moss;
-            if (rnd == 1) return EnemyType.SporeHead;
-            if (rnd == 2) return EnemyType.Wolfey;
-            return EnemyType.Iyv;
+            return EnemyType.Moss;
         }
-        else if (CurrentWave >= 5 && CurrentWave < 10)
+        // Wave 3-4 (60-120s): Moss (%70) ve SporeHead (%30)
+        else if (CurrentWave <= 4)
         {
-            // Wave 5-9: Moss ve SporeHead
-            int rnd = Random.Range(0, 2);
-            return rnd == 0 ? EnemyType.Moss : EnemyType.SporeHead;
+            return (Random.value < 0.7f) ? EnemyType.Moss : EnemyType.SporeHead;
         }
+        // Wave 5 (120-150s): Mid-run wave (Moss %60 + SporeHead %40 + Garantili Elite)
+        else if (CurrentWave == 5)
+        {
+            return (Random.value < 0.6f) ? EnemyType.Moss : EnemyType.SporeHead;
+        }
+        // Wave 6-7 (150-210s): Hızlı kurt (Wolfey) savaşa katılır! (Moss %40, SporeHead %30, Wolfey %30)
+        else if (CurrentWave <= 7)
+        {
+            float roll = Random.value;
+            if (roll < 0.4f) return EnemyType.Moss;
+            if (roll < 0.7f) return EnemyType.SporeHead;
+            return EnemyType.Wolfey;
+        }
+        // Wave 8-9 (210-270s): Menzilli asitçi (Iyv) dahil 4 tür birden saldırır (Kaos & Boss öncesi zirve!)
         else
         {
-            // Wave 1-4: Sadece Moss
-            return EnemyType.Moss;
+            float roll = Random.value;
+            if (roll < 0.30f) return EnemyType.Moss;
+            if (roll < 0.55f) return EnemyType.SporeHead;
+            if (roll < 0.80f) return EnemyType.Wolfey;
+            return EnemyType.Iyv;
         }
     }
 

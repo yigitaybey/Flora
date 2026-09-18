@@ -35,29 +35,24 @@ public class UVLampWeapon : MonoBehaviour
 
     void DealDamageInAura()
     {
-        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
         float sqrRadius = damageRadius * damageRadius;
+        float finalDamage = damagePerTick * (UpgradeManager.Instance != null ? UpgradeManager.Instance.globalDamageMultiplier : 1f);
 
-        foreach (GameObject enemyObj in enemies)
+        for (int i = 0; i < Enemy.ActiveEnemies.Count; i++)
         {
-            if (!enemyObj.activeInHierarchy) continue;
+            Enemy enemyScript = Enemy.ActiveEnemies[i];
+            if (enemyScript == null || !enemyScript.gameObject.activeInHierarchy) continue;
 
-            float sqrDistance = (transform.position - enemyObj.transform.position).sqrMagnitude;
+            float sqrDistance = (transform.position - enemyScript.transform.position).sqrMagnitude;
 
             if (sqrDistance <= sqrRadius)
             {
-                Enemy enemyScript = enemyObj.GetComponent<Enemy>();
-                if (enemyScript != null)
-                {
-                    // Global hasar çarpanı eklendi
-                    float finalDamage = damagePerTick * UpgradeManager.Instance.globalDamageMultiplier;
-                    enemyScript.TakeDamage(finalDamage);
+                enemyScript.TakeDamage(finalDamage);
 
-                    // MAX Level (8) ise %30 Yavaşlatma (Slow) uygula
-                    if (currentLevel >= 8)
-                    {
-                        enemyScript.ApplySlow(30f, tickRate + 0.1f);
-                    }
+                // MAX Level (8) ise %30 Yavaşlatma (Slow) uygula
+                if (currentLevel >= 8)
+                {
+                    enemyScript.ApplySlow(30f, tickRate + 0.1f);
                 }
             }
         }
