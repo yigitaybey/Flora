@@ -30,14 +30,14 @@ public class PlayerPassives : MonoBehaviour
     }
 
     // --- ŞANS (LUCK) ---
-    // Consumable eşyaların (İksir, Güneş, Vakum) düşme ihtimali
+    // Consumable eşyaların (İksir, Güneş, Vakum) düşme ihtimali (%20 artırıldı)
     public float GetConsumableDropChance()
     {
-        float baseChance = 0.005f; // %0.5 Temel İhtimal (Eski haline göre %50 düşürüldü)
+        float baseChance = 0.006f; // %20 artırıldı: 0.005 -> 0.006
         if (luckLevel == 0) return baseChance;
 
-        // Her seviye %0.25 ekler (Max %2.5 İhtimal)
-        return baseChance + (luckLevel * 0.0025f); 
+        // Her seviye %0.3 ekler (0.0025 -> 0.003)
+        return baseChance + (luckLevel * 0.003f); 
     }
 
     // --- LANET (CURSE) ---

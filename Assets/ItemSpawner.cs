@@ -6,7 +6,7 @@ public class ItemSpawner : MonoBehaviour
     public GameObject itemPrefab; // Spawn edilecek iksir prefabı
     
     [Tooltip("Kaç saniyede bir yeni eşya spawn olacak?")]
-    public float spawnInterval = 30f; 
+    public float spawnInterval = 25f; // %20 daha sık spawn (30s -> 25s)
     
     [Tooltip("Karakterden ne kadar uzakta oluşacaklar? (Minimum)")]
     public float minSpawnRadius = 10f;

@@ -6,7 +6,7 @@ public class EnemySpawner : MonoBehaviour
 {
     [Header("Spawner Ayarları")]
     public Transform playerTarget;
-    public float baseSPS = 1.1f; // Saniyede doğan temel düşman sayısı (Dengeli başlangıç için 1.1'e çekildi)
+    public float baseSPS = 1.32f; // Saniyede doğan temel düşman sayısı (%20 artırıldı: 1.1 -> 1.32)
     public float spawnRadius = 25f;
     
     [Header("FPS Koruması")]
@@ -180,21 +180,20 @@ public class EnemySpawner : MonoBehaviour
         {
             return (Random.value < 0.6f) ? EnemyType.Moss : EnemyType.SporeHead;
         }
-        // Wave 6-7 (150-210s): Hızlı kurt (Wolfey) savaşa katılır! (Moss %40, SporeHead %30, Wolfey %30)
+        // Wave 6-7 (150-210s): Menzilli Iyv savaşa katılır! (Moss %50, SporeHead %30, Iyv %20)
         else if (CurrentWave <= 7)
         {
             float roll = Random.value;
-            if (roll < 0.4f) return EnemyType.Moss;
-            if (roll < 0.7f) return EnemyType.SporeHead;
-            return EnemyType.Wolfey;
+            if (roll < 0.50f) return EnemyType.Moss;
+            if (roll < 0.80f) return EnemyType.SporeHead;
+            return EnemyType.Iyv;
         }
-        // Wave 8-9 (210-270s): Menzilli asitçi (Iyv) dahil 4 tür birden saldırır (Kaos & Boss öncesi zirve!)
+        // Wave 8-9 (210-270s): 3 tür birden yoğun saldırır (Kaos & Boss öncesi zirve!)
         else
         {
             float roll = Random.value;
-            if (roll < 0.30f) return EnemyType.Moss;
-            if (roll < 0.55f) return EnemyType.SporeHead;
-            if (roll < 0.80f) return EnemyType.Wolfey;
+            if (roll < 0.40f) return EnemyType.Moss;
+            if (roll < 0.70f) return EnemyType.SporeHead;
             return EnemyType.Iyv;
         }
     }

@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.AI;
+using System.Collections;
 
 public enum EnemyType
 {
@@ -24,15 +25,15 @@ public class Enemy : MonoBehaviour
     private Vector3 initialScale;
 
     [Header("Düşman ve Boss Can Ayarları")]
-    public float baseMaxHealth = 25f; // Normal düşman başlangıç canı
-    public float bossBaseHealth = 500f; // Boss (Chinar) canı (İstediğin sayıyı yazabilirsin!)
+    public float baseMaxHealth = 30f; // Normal düşman başlangıç canı (%20 artırıldı: 25 -> 30)
+    public float bossBaseHealth = 600f; // Boss (Chinar) canı (%20 artırıldı: 500 -> 600)
     public bool useFixedBossHealth = true; // True ise direkt yukarıdaki sayıyı alır (Testlerde kolay kesmek için)
     private float currentMaxHealth; // O anki levela göre hesaplanmış max can
     public float currentHealth;
 
     [Header("Sabit Statlar (Level İle Artmaz)")]
     public float moveSpeed = 3.2f; // Hız (3.5'ten 3.2'ye düşürüldü)
-    public float baseDamage = 8f; // Temel Hasar (10'dan 8'e düşürüldü)
+    public float baseDamage = 9.6f; // Temel Hasar (%20 artırıldı: 8 -> 9.6)
     private float currentDamage; // Hasar da artık Wave ile artacak
     public float attackRange = 1.5f;
     public float attackCooldown = 1f;
@@ -49,10 +50,11 @@ public class Enemy : MonoBehaviour
     private float nextBurnTick;
 
     [Header("Ödül Ayarları")]
-    public float coreSeedDropChance = 5f; // Yüzde 5 ihtimalle Core Seed düşürsün
+    public float coreSeedDropChance = 6f; // %20 artırıldı: 5 -> 6 (Core Seed düşürme ihtimali)
 
-    [Header("Animasyon")]
+    [Header("Animasyon & VFX")]
     public Animator animator;
+    public GameObject explosionVFXPrefab;
 
     // --- SIFIR BELLEK ÇÖPÜ (ZERO-ALLOC) OPTİMİZASYONU ---
     // Sahnedeki aktif yaşayan tüm düşmanların listesi (FindGameObjectsWithTag yerine kullanılır)
@@ -140,6 +142,7 @@ public class Enemy : MonoBehaviour
         }
 
         agent.enabled = true; // Object pool'dan çıkınca aktif et
+        if (agent.isActiveAndEnabled) agent.isStopped = false;
         lastAttackTime = Time.time;
     }
 
@@ -168,13 +171,13 @@ public class Enemy : MonoBehaviour
                 break;
 
             case EnemyType.SporeHead:
-                // Kamikaze: 2.0 birim yakına girince tetiklenir
-                if (sqrDistance <= (2.0f * 2.0f))
+                // Kamikaze: 2.2 birim yakına girince tetiklenir
+                if (sqrDistance <= (2.2f * 2.2f))
                 {
                     if (!isExploding)
                     {
                         isExploding = true;
-                        Invoke(nameof(Explode), 0.2f); // 0.2 saniye gecikmeli patla
+                        StartCoroutine(KamikazeSequence());
                     }
                 }
                 break;
@@ -234,15 +237,62 @@ public class Enemy : MonoBehaviour
         }
     }
 
+    private IEnumerator KamikazeSequence()
+    {
+        // 1. Dur ve oyuncunun dibinde şişmeye başla
+        if (agent != null && agent.isActiveAndEnabled)
+        {
+            agent.isStopped = true;
+        }
+
+        Vector3 startScale = transform.localScale;
+        Vector3 targetScale = startScale * 1.45f; // %45 şişsin
+
+        float elapsed = 0f;
+        float fuseDuration = 0.35f; // 0.35 saniye heyecanlı şişme süresi
+
+        while (elapsed < fuseDuration)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / fuseDuration;
+            transform.localScale = Vector3.Lerp(startScale, targetScale, t);
+            yield return null;
+        }
+
+        // 2. GÜM! Patlama anı
+        Explode();
+    }
+
     void Explode()
     {
-        if (playerHealth != null)
+        // 1. Patlama Görsel Efekti (Partikül & Parlama)
+        if (explosionVFXPrefab != null)
         {
-            // Direkt oyuncuya hasar ver (Alan hasarı için ilerde OverlapSphere konabilir)
-            playerHealth.TakeDamage(currentDamage);
+            Instantiate(explosionVFXPrefab, transform.position + Vector3.up * 0.6f, Quaternion.identity);
+        }
+        else
+        {
+            SporeExplosionVFX.Spawn(transform.position + Vector3.up * 0.6f);
+        }
+
+        // 2. Ekran sarsıntısı ve mobil titreşim
+        if (CameraFollow.Instance != null)
+        {
+            CameraFollow.Instance.Shake(0.2f, 0.16f);
+        }
+        HapticFeedback.TriggerHeavy();
+
+        if (playerHealth != null && playerTarget != null)
+        {
+            // Patlama anında oyuncu hala menzilde mi (2.8m) kontrol et
+            float distSqr = (transform.position - playerTarget.position).sqrMagnitude;
+            if (distSqr <= (2.8f * 2.8f))
+            {
+                playerHealth.TakeDamage(currentDamage * 1.5f); // Kamikaze patlaması sert vursun
+            }
         }
         
-        // Kendini yok et (Tohum/XP bırakması için Die çağrılır)
+        // Kendini yok et (Tohum/XP bırakarak havuza döner)
         Die();
     }
 
