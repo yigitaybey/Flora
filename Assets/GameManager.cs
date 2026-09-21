@@ -41,16 +41,16 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // --- SAHNE GEÇİŞLERİ ---
+    // --- SAHNE GEÇİŞLERİ (ASENKRON LOADING SCREEN) ---
     public void LoadTransitionScene()
     {
-        SceneManager.LoadScene("TransitionScene");
+        LoadingScreen.LoadScene("TransitionScene", "Exploring World Map...");
     }
 
     public void LoadCombatScene()
     {
         currentRunCoreSeedCount = 0; // Savaş başlarken tohumları sıfırla
-        SceneManager.LoadScene("CombatScene");
+        LoadingScreen.LoadScene("CombatScene", "Entering Corrupted Forest...");
     }
 
     public void LoadBaseScene()
@@ -62,7 +62,7 @@ public class GameManager : MonoBehaviour
             currentRunCoreSeedCount = 0;
             SaveData();
         }
-        SceneManager.LoadScene("BaseScene");
+        LoadingScreen.LoadScene("BaseScene", "Returning to Radio Tower...");
     }
 
     // --- KAYIT SİSTEMİ (SAVE/LOAD) ---
