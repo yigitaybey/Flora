@@ -91,35 +91,7 @@ public class RevenueCatManager : MonoBehaviour
     /// </summary>
     public void PurchaseSeedPack()
     {
-        Debug.Log("🛒 Tohum Paketi satın alma başlatılıyor...");
-
-        // ═══════════════════════════════════════════════════
-        // RevenueCat SDK İle Gerçek Satın Alma:
-        // ═══════════════════════════════════════════════════
-#if !UNITY_EDITOR
-        var purchases = GetComponent<Purchases>();
-        if (purchases != null)
-        {
-            purchases.GetOfferings((offerings, error) =>
-            {
-                if (error != null)
-                {
-                    Debug.LogError("Offerings alınamadı: " + error.Message);
-                    return;
-                }
-                
-                if (offerings.Current != null && offerings.Current.AvailablePackages.Count > 0)
-                {
-                    // Burada hackathon için RevenueCat ürünlerinin kurulduğunu varsayıyoruz
-                    // var package = offerings.Current.AvailablePackages[0];
-                    // purchases.PurchasePackage(package, (productIdentifier, purchaserInfo, userCancelled, purchaseError) => ...);
-                }
-            });
-        }
-#endif
-
-
-        // Simülasyon: Direkt ver
+        Debug.Log("🛒 Tohum Paketi (Simülasyon) başlatılıyor...");
         GrantSeedPack();
     }
 
@@ -129,32 +101,8 @@ public class RevenueCatManager : MonoBehaviour
     /// </summary>
     public void PurchasePlantTree()
     {
-        Debug.Log("🌳 Ağaç Dikme paketi satın alma başlatılıyor...");
-#if !UNITY_EDITOR
-        var purchases = GetComponent<Purchases>();
-        if (purchases != null)
-        {
-            purchases.PurchaseProduct(PRODUCT_PLANT_TREE, (productIdentifier, purchaserInfo, userCancelled, purchaseError) =>
-            {
-                if (userCancelled)
-                {
-                    Debug.Log("Satın alma iptal edildi.");
-                    return;
-                }
-                if (purchaseError != null)
-                {
-                    Debug.LogError("Satın alma hatası: " + purchaseError.Message);
-                    return;
-                }
-                
-                // Başarılı!
-                GrantPlantTree();
-            });
-        }
-#else
-        // Editörde gerçek satın alma çalışmaz, simüle et
+        Debug.Log("🌳 Ağaç Dikme Paketi (Simülasyon) başlatılıyor...");
         GrantPlantTree();
-#endif
     }
 
     /// <summary>
@@ -162,8 +110,7 @@ public class RevenueCatManager : MonoBehaviour
     /// </summary>
     public void PurchaseMegaPack()
     {
-        Debug.Log("🌲🌲 Mega Paket satın alma başlatılıyor...");
-        // Gerçek SDK satın alma kodu yukarıdakiyle aynı pattern
+        Debug.Log("🌲🌲 Mega Paket (Simülasyon) başlatılıyor...");
         GrantMegaPack();
     }
 

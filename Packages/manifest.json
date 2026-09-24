@@ -4,11 +4,13 @@
       "name": "OpenUPM",
       "url": "https://package.openupm.com",
       "scopes": [
-        "com.revenuecat.purchases-unity"
+        "com.revenuecat.purchases-unity",
+        "com.google.external-dependency-manager"
       ]
     }
   ],
   "dependencies": {
+    "com.google.external-dependency-manager": "1.2.189",
     "com.revenuecat.purchases-unity": "9.11.1",
     "com.unity.ads": "4.4.2",
     "com.unity.ai.navigation": "2.0.10",

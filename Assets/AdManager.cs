@@ -7,9 +7,9 @@ public class AdManager : MonoBehaviour, IUnityAdsInitializationListener, IUnityA
     public static AdManager Instance;
 
     [Header("Unity Ads IDs")]
-    public string androidGameId = "0000000"; // Fake IDs for hackathon simulation if needed
-    public string iosGameId = "0000000";
-    public bool testMode = true;
+    public string androidGameId = "800390583";
+    public string iosGameId = "800390582";
+    public bool testMode = false;
     
     [Header("Placement IDs")]
     public string androidAdUnitId = "BP_Rewarded_Android";
