@@ -166,40 +166,24 @@ public class BaseUIManager : MonoBehaviour
         Debug.Log("Ağaç Dikme / Mağaza Menüsü Açıldı! (RevenueCat bağlanacak)");
     }
 
-    // --- REVENUECAT MAĞAZA (TEST İÇİN SAHTE SATIN ALIMLAR) ---
+    // --- REVENUECAT MAĞAZA (Satın Alma Butonları) ---
 
     public void BuyPackage1()
     {
-        if (GameManager.Instance != null)
-        {
-            GameManager.Instance.AddCoreSeed(5000);
-            UpdateCurrencyUI();
-            Debug.Log("5000 Tohum Satın Alındı! (API Bağlanana Kadar Test)");
-        }
+        if (RevenueCatManager.Instance != null)
+            RevenueCatManager.Instance.PurchaseSeedPack();
     }
 
     public void BuyPackage2()
     {
-        if (GameManager.Instance != null)
-        {
-            GameManager.Instance.AddCoreSeed(7000);
-            GameManager.Instance.donationTreesCount += 1;
-            GameManager.Instance.SaveData();
-            UpdateCurrencyUI();
-            Debug.Log("7000 Tohum ve 1 Ağaç Dikildi! Toplam Ağaç: " + GameManager.Instance.donationTreesCount);
-        }
+        if (RevenueCatManager.Instance != null)
+            RevenueCatManager.Instance.PurchasePlantTree();
     }
 
     public void BuyPackage3()
     {
-        if (GameManager.Instance != null)
-        {
-            GameManager.Instance.AddCoreSeed(10000);
-            GameManager.Instance.donationTreesCount += 2;
-            GameManager.Instance.SaveData();
-            UpdateCurrencyUI();
-            Debug.Log("10000 Tohum ve 2 Ağaç Dikildi! Toplam Ağaç: " + GameManager.Instance.donationTreesCount);
-        }
+        if (RevenueCatManager.Instance != null)
+            RevenueCatManager.Instance.PurchaseMegaPack();
     }
 
     // --- AYARLAR (UI SLIDER VE TOGGLE) BAĞLANTILARI ---

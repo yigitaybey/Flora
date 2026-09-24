@@ -184,11 +184,22 @@ public class CombatUIManager : MonoBehaviour
         }
     }
 
-    // 2x Reklam Butonundan çağrılacak fonksiyon
     public void WatchAdForDoubleLoot()
     {
-        // Şimdilik reklam izlenmiş gibi kabul edip tohumu ikiye katlıyoruz
-        Debug.Log("Ad Watched! Seeds doubled...");
+        if (AdManager.Instance != null)
+        {
+            Debug.Log("Video reklam yükleniyor/gösteriliyor...");
+            AdManager.Instance.ShowRewardedAd();
+        }
+        else
+        {
+            Debug.LogWarning("AdManager bulunamadı, simülasyon olarak ikiye katlanıyor...");
+            ApplyDoubleLoot();
+        }
+    }
+
+    public void ApplyDoubleLoot()
+    {
 
         if (GameManager.Instance != null)
         {
