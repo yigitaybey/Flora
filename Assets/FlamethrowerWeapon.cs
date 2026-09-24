@@ -20,6 +20,15 @@ public class FlamethrowerWeapon : MonoBehaviour
     private ParticleSystem[] flameParticles;
     private bool isFiring = false;
 
+    public float EffectiveTickRate
+    {
+        get
+        {
+            float mult = (GameManager.Instance != null) ? GameManager.Instance.FlameMultishotMultiplier : 1f;
+            return tickRate / Mathf.Max(1f, mult);
+        }
+    }
+
     void Start()
     {
         if (flameVisual != null)
@@ -53,7 +62,7 @@ public class FlamethrowerWeapon : MonoBehaviour
         // Hasar verme işlemini (Tick) sadece düşman varken ve süre dolduğunda yap
         if (isFiring && Time.time >= nextTickTime)
         {
-            nextTickTime = Time.time + tickRate;
+            nextTickTime = Time.time + EffectiveTickRate;
             DealDamageInCone();
         }
     }
@@ -122,7 +131,9 @@ public class FlamethrowerWeapon : MonoBehaviour
     void DealDamageInCone()
     {
         float sqrRange = range * range;
-        float finalDamage = damagePerTick * (UpgradeManager.Instance != null ? UpgradeManager.Instance.globalDamageMultiplier : 1f);
+        float pMult = (GameManager.Instance != null) ? GameManager.Instance.PollenBonusDamageMultiplier : 1f;
+        float uMult = (UpgradeManager.Instance != null) ? UpgradeManager.Instance.globalDamageMultiplier : 1f;
+        float finalDamage = damagePerTick * pMult * uMult;
         
         for (int i = 0; i < Enemy.ActiveEnemies.Count; i++)
         {

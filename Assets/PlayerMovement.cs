@@ -36,6 +36,11 @@ public class PlayerMovement : MonoBehaviour
         // Sahnede Joystick varsa otomatik bul
         joystick = FindFirstObjectByType<FloatingJoystick>();
         previousValidPosition = transform.position;
+
+        if (GameManager.Instance != null)
+        {
+            moveSpeed *= GameManager.Instance.UVBonusSpeedMultiplier;
+        }
     }
 
     void Update()

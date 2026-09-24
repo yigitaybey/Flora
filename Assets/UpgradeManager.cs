@@ -10,13 +10,6 @@ public enum UpgradeType
     UnlockAxe, UpgradeAxe,
     UnlockFlamethrower, UpgradeFlamethrower,
     
-    // Pasifler
-    UpgradeMagnet,
-    UpgradeLuck,
-    UpgradeCurse,
-    UpgradeTurret,
-    UpgradeCrit,
-    
     // Tekrarlanabilir / Yedek Yetenek
     HealPotion
 }
@@ -84,7 +77,6 @@ public class UpgradeManager : MonoBehaviour
         List<UpgradeType> validUpgrades = new List<UpgradeType>();
         List<UpgradeType> weaponUnlocks = new List<UpgradeType>();
         List<UpgradeType> weaponUpgrades = new List<UpgradeType>();
-        List<UpgradeType> passiveUpgrades = new List<UpgradeType>();
 
         bool hasAnyWeapon = false;
 
@@ -94,16 +86,6 @@ public class UpgradeManager : MonoBehaviour
         if (axeWeapon != null) { if (!axeWeapon.enabled) weaponUnlocks.Add(UpgradeType.UnlockAxe); else { hasAnyWeapon = true; if (axeWeapon.currentLevel < 8) weaponUpgrades.Add(UpgradeType.UpgradeAxe); } }
         if (flamethrowerWeapon != null) { if (!flamethrowerWeapon.enabled) weaponUnlocks.Add(UpgradeType.UnlockFlamethrower); else { hasAnyWeapon = true; if (flamethrowerWeapon.currentLevel < 8) weaponUpgrades.Add(UpgradeType.UpgradeFlamethrower); } }
 
-        // Pasif Eşya Kontrolleri (Seviye 8 maksimum)
-        if (PlayerPassives.Instance != null)
-        {
-            if (PlayerPassives.Instance.magnetLevel < 8) passiveUpgrades.Add(UpgradeType.UpgradeMagnet);
-            if (PlayerPassives.Instance.luckLevel < 8) passiveUpgrades.Add(UpgradeType.UpgradeLuck);
-            if (PlayerPassives.Instance.curseLevel < 8) passiveUpgrades.Add(UpgradeType.UpgradeCurse);
-            if (PlayerPassives.Instance.turretLevel < 8) passiveUpgrades.Add(UpgradeType.UpgradeTurret);
-            if (PlayerPassives.Instance.critLevel < 8) passiveUpgrades.Add(UpgradeType.UpgradeCrit);
-        }
-
         if (!hasAnyWeapon)
         {
             validUpgrades.AddRange(weaponUnlocks);
@@ -112,7 +94,6 @@ public class UpgradeManager : MonoBehaviour
         {
             validUpgrades.AddRange(weaponUnlocks);
             validUpgrades.AddRange(weaponUpgrades);
-            validUpgrades.AddRange(passiveUpgrades);
         }
 
         for (int i = 0; i < 3; i++)
@@ -141,28 +122,7 @@ public class UpgradeManager : MonoBehaviour
         {
             // YEDEK / TEKRARLANABİLİR
             case UpgradeType.HealPotion:
-                return "Health Potion (Max Lvl Reward):\nRestores +30 HP";
-
-            // PASİFLER
-            case UpgradeType.UpgradeMagnet:
-                int nextMag = PlayerPassives.Instance.magnetLevel + 1;
-                return (nextMag == 1) ? "NEW PASSIVE: Seed Magnet (Lvl 1)" : $"Seed Magnet (Lvl {nextMag}): Seed Collection Radius Increased";
-            
-            case UpgradeType.UpgradeLuck:
-                int nextLuck = PlayerPassives.Instance.luckLevel + 1;
-                return (nextLuck == 1) ? "NEW PASSIVE: Luck (Lvl 1)" : $"Luck (Lvl {nextLuck}): Item & Turret Drop Rate Increased";
-            
-            case UpgradeType.UpgradeCurse:
-                int nextCurse = PlayerPassives.Instance.curseLevel + 1;
-                return (nextCurse == 1) ? "NEW PASSIVE: Curse (Lvl 1)" : $"Curse (Lvl {nextCurse}): Enemy Density & Dropped XP Increased";
-            
-            case UpgradeType.UpgradeTurret:
-                int nextTurret = PlayerPassives.Instance.turretLevel + 1;
-                return (nextTurret == 1) ? "NEW PASSIVE: Root Turret (Lvl 1)" : $"Root Turret (Lvl {nextTurret}): Turret Damage & Duration Increased";
-            
-            case UpgradeType.UpgradeCrit:
-                int nextCrit = PlayerPassives.Instance.critLevel + 1;
-                return (nextCrit == 1) ? "NEW PASSIVE: Deadly Focus (Lvl 1)\nCrit Chance +5%" : $"Deadly Focus (Lvl {nextCrit}): Crit Chance +5% / Multiplier +0.125x";
+                return "🧪 Acil Durum İksiri:\n+30 HP Canlandır";
 
 
             // POLLEN
@@ -177,12 +137,12 @@ public class UpgradeManager : MonoBehaviour
                     case 5: return "Pollen (Lvl 5): Projectile Speed & Range +20%";
                     case 6: return "Pollen (Lvl 6): Damage +25% | SYNERGY: Max HP +20";
                     case 7: return "Pollen (Lvl 7): Fire Rate +25%";
-                    case 8: return "Pollen (MAX): 5 Piercing Projectiles | SYNERGY: Max HP +20";
+                    case 8: return "⚡ EVRİM: ÇİÇEK GATLING'İ!\n5 Delici Mermi & Seri Tarama";
                     default: return "Pollen Upgraded";
                 }
 
             // UV LAMP
-            case UpgradeType.UnlockUV: return "NEW WEAPON: UV Lamp (Lvl 1)";
+            case UpgradeType.UnlockUV: return "YENİ SİLAH: UV Lambası (Lvl 1)";
             case UpgradeType.UpgradeUV:
                 int nextUVLevel = uvWeapon.currentLevel + 1;
                 switch (nextUVLevel)
@@ -193,12 +153,12 @@ public class UpgradeManager : MonoBehaviour
                     case 5: return "UV Lamp (Lvl 5): Area Damage +30%";
                     case 6: return "UV Lamp (Lvl 6): Aura Radius +20% | SYNERGY: +1.0 HP Regen";
                     case 7: return "UV Lamp (Lvl 7): Rapid Pulse Frequency";
-                    case 8: return "UV Lamp (MAX): 30% Slow Aura | SYNERGY: +1.5 HP Regen";
+                    case 8: return "⚡ EVRİM: SÜPERNOVA!\nDevasa Şok Dalgası & %40 Yavaşlatma";
                     default: return "UV Lamp Upgraded";
                 }
 
             // AXE
-            case UpgradeType.UnlockAxe: return "NEW WEAPON: Orbiting Axe (Lvl 1)";
+            case UpgradeType.UnlockAxe: return "YENİ SİLAH: Dönen Balta (Lvl 1)";
             case UpgradeType.UpgradeAxe:
                 int nextAxeLevel = axeWeapon.currentLevel + 1;
                 switch (nextAxeLevel)
@@ -209,12 +169,12 @@ public class UpgradeManager : MonoBehaviour
                     case 5: return "Axe (Lvl 5): Axe Size +25%";
                     case 6: return "Axe (Lvl 6): Axe Damage +30% | SYNERGY: Move Speed +10%";
                     case 7: return "Axe (Lvl 7): Orbit Speed +30%";
-                    case 8: return "Axe (MAX): 4-Axe Kinetic Sawblade | SYNERGY: Move Speed +10%";
+                    case 8: return "⚡ EVRİM: TESTERE KALKANI!\n4 Dev Balta ile Geçilmez Kalkan";
                     default: return "Axe Upgraded";
                 }
 
             // FLAMETHROWER
-            case UpgradeType.UnlockFlamethrower: return "NEW WEAPON: Flamethrower (Lvl 1)";
+            case UpgradeType.UnlockFlamethrower: return "YENİ SİLAH: Alev Püskürtücü (Lvl 1)";
             case UpgradeType.UpgradeFlamethrower:
                 int nextFlameLevel = flamethrowerWeapon.currentLevel + 1;
                 switch (nextFlameLevel)
@@ -225,7 +185,7 @@ public class UpgradeManager : MonoBehaviour
                     case 5: return "Flame (Lvl 5): Flame Cone +30%";
                     case 6: return "Flame (Lvl 6): Cooldown -30% | SYNERGY: All Damage +10%";
                     case 7: return "Flame (Lvl 7): Flame Damage +35%";
-                    case 8: return "Flame (MAX): Scorched Earth Ground Fire | SYNERGY: All Damage +15%";
+                    case 8: return "⚡ EVRİM: LAV TARLASI!\nYerde Sönmeyen Alev Göletleri";
                     default: return "Flame Upgraded";
                 }
 
@@ -244,23 +204,6 @@ public class UpgradeManager : MonoBehaviour
             // YEDEK / TEKRARLANABİLİR
             case UpgradeType.HealPotion:
                 if (playerHealth != null) playerHealth.Heal(30f);
-                break;
-
-            // PASİFLER
-            case UpgradeType.UpgradeMagnet:
-                if (PlayerPassives.Instance != null) PlayerPassives.Instance.magnetLevel++;
-                break;
-            case UpgradeType.UpgradeLuck:
-                if (PlayerPassives.Instance != null) PlayerPassives.Instance.luckLevel++;
-                break;
-            case UpgradeType.UpgradeCurse:
-                if (PlayerPassives.Instance != null) PlayerPassives.Instance.curseLevel++;
-                break;
-            case UpgradeType.UpgradeTurret:
-                if (PlayerPassives.Instance != null) PlayerPassives.Instance.turretLevel++;
-                break;
-            case UpgradeType.UpgradeCrit:
-                if (PlayerPassives.Instance != null) PlayerPassives.Instance.critLevel++;
                 break;
 
             // SİLAHLAR

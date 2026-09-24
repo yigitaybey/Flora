@@ -459,15 +459,7 @@ public class Enemy : MonoBehaviour
             }
         }
 
-        // 4. Kök Taret (Turret) Çıkma Şansı (Turret pasifi + Luck pasifi etkiler)
-        if (PlayerPassives.Instance != null && PlayerPassives.Instance.turretLevel > 0)
-        {
-            if (Random.value < PlayerPassives.Instance.GetTurretSpawnChance())
-            {
-                // Sonraki adımda yazılacak TurretManager üzerinden çağrılacak
-                if (TurretManager.Instance != null) TurretManager.Instance.SpawnTurret(transform.position);
-            }
-        }
+        // Kök Taret sistemi kaldırıldı (Atölye güncellemesine kadar devre dışı)
 
         // 5. Düşmanı yok etme (Object Pooling - Havuza Geri Gönder)
         agent.enabled = false;

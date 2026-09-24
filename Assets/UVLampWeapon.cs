@@ -17,6 +17,15 @@ public class UVLampWeapon : MonoBehaviour
 
     private float nextTickTime;
 
+    public float EffectiveTickRate
+    {
+        get
+        {
+            float mult = (GameManager.Instance != null) ? GameManager.Instance.FlameMultishotMultiplier : 1f;
+            return tickRate / Mathf.Max(1f, mult);
+        }
+    }
+
     void Start()
     {
         UpdateVisualSize();
@@ -28,7 +37,7 @@ public class UVLampWeapon : MonoBehaviour
 
         if (Time.time >= nextTickTime)
         {
-            nextTickTime = Time.time + tickRate;
+            nextTickTime = Time.time + EffectiveTickRate;
             DealDamageInAura();
         }
     }
@@ -36,7 +45,9 @@ public class UVLampWeapon : MonoBehaviour
     void DealDamageInAura()
     {
         float sqrRadius = damageRadius * damageRadius;
-        float finalDamage = damagePerTick * (UpgradeManager.Instance != null ? UpgradeManager.Instance.globalDamageMultiplier : 1f);
+        float pMult = (GameManager.Instance != null) ? GameManager.Instance.PollenBonusDamageMultiplier : 1f;
+        float uMult = (UpgradeManager.Instance != null) ? UpgradeManager.Instance.globalDamageMultiplier : 1f;
+        float finalDamage = damagePerTick * pMult * uMult;
 
         for (int i = 0; i < Enemy.ActiveEnemies.Count; i++)
         {

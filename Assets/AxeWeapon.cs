@@ -36,10 +36,16 @@ public class AxeWeapon : MonoBehaviour
 
     void Start()
     {
+        if (GameManager.Instance != null)
+        {
+            damage *= GameManager.Instance.PollenBonusDamageMultiplier;
+        }
+
         if (axeVisual != null && axeVisual.transform.childCount > 0)
         {
             axeModelPrefab = axeVisual.transform.GetChild(0).gameObject;
             activeAxes.Add(axeModelPrefab.transform); 
+            if (enabled) UpdateAxeCount();
         }
         else
         {
@@ -203,6 +209,7 @@ public class AxeWeapon : MonoBehaviour
     {
         enabled = true;
         currentLevel = 1;
+        UpdateAxeCount();
         Debug.Log("Balta Silahı Açıldı!");
     }
 
@@ -223,7 +230,7 @@ public class AxeWeapon : MonoBehaviour
                 if (playerMovement != null) playerMovement.IncreaseSpeed(0.05f); // SİNERJİ: Hız +%5
                 break;
             case 4:
-                SetAxeCount(2); // 2 Balta
+                UpdateAxeCount(); // Cehennem Çoğaltıcı ile katlanan balta sayısı
                 orbitSpeed *= 1.10f; // Dönüş Hızı hafif artar
                 break;
             case 5:
@@ -246,12 +253,22 @@ public class AxeWeapon : MonoBehaviour
                 orbitSpeed *= 1.30f; // Dönüş Hızı +%30
                 break;
             case 8:
-                SetAxeCount(4); // 4 Balta
+                UpdateAxeCount(); // Cehennem Çoğaltıcı ile katlanan 4+ balta kasırgası!
                 if (playerMovement != null) playerMovement.IncreaseSpeed(0.10f); // SİNERJİ: Hız +%10
                 break;
         }
 
         Debug.Log("Balta Seviye Atladı! Yeni Level: " + currentLevel);
+    }
+
+    void UpdateAxeCount()
+    {
+        int baseAxes = 1;
+        if (currentLevel >= 8) baseAxes = 4;
+        else if (currentLevel >= 4) baseAxes = 2;
+
+        int multishot = (GameManager.Instance != null) ? GameManager.Instance.FlameMultishotMultiplier : 1;
+        SetAxeCount(baseAxes * multishot);
     }
 
     void SetAxeCount(int count)

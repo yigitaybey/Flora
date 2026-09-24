@@ -31,8 +31,13 @@ public class CoreSeed : MonoBehaviour
         }
         else
         {
-            // Oyuncuyu etrafta ara (Optimizasyon için aslında Player referansını statik tutabiliriz ama MVP için OverlapSphere yeterli)
-            Collider[] colliders = Physics.OverlapSphere(transform.position, magnetRadius);
+            float currentMagnetRadius = magnetRadius;
+            if (PlayerPassives.Instance != null)
+            {
+                currentMagnetRadius = PlayerPassives.Instance.GetMagnetRadius();
+            }
+
+            Collider[] colliders = Physics.OverlapSphere(transform.position, currentMagnetRadius);
             foreach (Collider col in colliders)
             {
                 if (col.CompareTag("Player"))
@@ -50,9 +55,12 @@ public class CoreSeed : MonoBehaviour
 
     void Collect()
     {
+        int amount = 1;
         if (GameManager.Instance != null)
         {
-            GameManager.Instance.AddCoreSeed(1);
+            float multiplier = GameManager.Instance.VitalSeedBonusMultiplier * GameManager.Instance.SunshineCurseRewardMultiplier;
+            amount = Mathf.Max(1, Mathf.RoundToInt(amount * multiplier));
+            GameManager.Instance.AddCoreSeed(amount);
         }
         else
         {

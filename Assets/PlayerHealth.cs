@@ -24,6 +24,10 @@ public class PlayerHealth : MonoBehaviour
 
     void Start()
     {
+        if (GameManager.Instance != null)
+        {
+            maxHealth += GameManager.Instance.AppleBonusHealth;
+        }
         currentHealth = maxHealth;
         UpdateUI();
     }
@@ -75,6 +79,12 @@ public class PlayerHealth : MonoBehaviour
     public void TakeDamage(float amount)
     {
         if (isDead || isGodMode) return;
+
+        // Ağaç Kabuğu (Axe Armor) Kalıcı Zırh İndirimi
+        if (GameManager.Instance != null && GameManager.Instance.AxeDamageReduction > 0f)
+        {
+            amount = Mathf.Max(1f, amount - GameManager.Instance.AxeDamageReduction);
+        }
 
         // Eğer son hasar alma zamanının üzerinden yeterli süre geçmediyse hasarı yok say (I-Frames)
         if (Time.time < lastDamageTime + invincibilityDuration)

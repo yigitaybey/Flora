@@ -47,6 +47,11 @@ public class PollenWeapon : MonoBehaviour
 
     void Start()
     {
+        if (GameManager.Instance != null)
+        {
+            damage *= GameManager.Instance.PollenBonusDamageMultiplier;
+        }
+
         if (gunModel == null && transform.childCount > 0)
         {
             gunModel = transform.GetChild(0);
@@ -212,6 +217,12 @@ public class PollenWeapon : MonoBehaviour
         else if (currentLevel >= 4)
         {
             bulletCount = 3;
+        }
+
+        // Cehennem Çoğaltıcı (Flame Multishot) Kalıcı Çarpanı!
+        if (GameManager.Instance != null)
+        {
+            bulletCount *= GameManager.Instance.FlameMultishotMultiplier;
         }
 
         SpawnBullets(spawnPos, baseDirection, bulletCount, pierceAmount);
