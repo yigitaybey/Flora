@@ -12,6 +12,8 @@ public class CombatUIManager : MonoBehaviour
 
     [Header("Ölüm Ekranı Metinleri")]
     public TextMeshProUGUI deathLootText; // Kazanılan tohumu göstermek için
+    [Tooltip("Tohum sayısının önüne eklenecek metin (Örn: 'x' veya boş bırakırsan direkt sayıyı yazar)")]
+    public string lootTextPrefix = "";
 
     [Header("Kazanma Ekranı Metinleri")]
     public TextMeshProUGUI winLootText; // Kazanılan tohumu göstermek için
@@ -126,7 +128,8 @@ public class CombatUIManager : MonoBehaviour
 
         if (deathLootText != null)
         {
-            deathLootText.text = "Seeds Collected: " + runLoot.ToString();
+            string prefix = string.IsNullOrEmpty(lootTextPrefix) ? "" : lootTextPrefix + " ";
+            deathLootText.text = prefix + runLoot.ToString();
         }
 
         if (deathPanel != null)
@@ -213,7 +216,8 @@ public class CombatUIManager : MonoBehaviour
         }
 
         // Metinleri ekranda güncelle
-        if (deathLootText != null) deathLootText.text = "Seeds Collected: " + runLoot.ToString();
+        string prefix = string.IsNullOrEmpty(lootTextPrefix) ? "" : lootTextPrefix + " ";
+        if (deathLootText != null) deathLootText.text = prefix + runLoot.ToString();
         if (winLootText != null) winLootText.text = "Seeds Collected: " + runLoot.ToString();
 
         // Reklam butonunu gizle ki oyuncu 2. kez basıp hile yapamasın
