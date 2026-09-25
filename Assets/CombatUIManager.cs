@@ -160,7 +160,8 @@ public class CombatUIManager : MonoBehaviour
 
         if (winLootText != null)
         {
-            winLootText.text = "Seeds Collected: " + runLoot.ToString();
+            string prefix = string.IsNullOrEmpty(lootTextPrefix) ? "" : lootTextPrefix + " ";
+            winLootText.text = prefix + runLoot.ToString();
         }
 
         if (winPanel != null)
@@ -218,7 +219,7 @@ public class CombatUIManager : MonoBehaviour
         // Metinleri ekranda güncelle
         string prefix = string.IsNullOrEmpty(lootTextPrefix) ? "" : lootTextPrefix + " ";
         if (deathLootText != null) deathLootText.text = prefix + runLoot.ToString();
-        if (winLootText != null) winLootText.text = "Seeds Collected: " + runLoot.ToString();
+        if (winLootText != null) winLootText.text = prefix + runLoot.ToString();
 
         // Reklam butonunu gizle ki oyuncu 2. kez basıp hile yapamasın
         if (deathDoubleLootButtonObj != null) deathDoubleLootButtonObj.SetActive(false);

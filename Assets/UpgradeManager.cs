@@ -23,6 +23,18 @@ public class UpgradeManager : MonoBehaviour
     public TextMeshProUGUI button2Text;
     public TextMeshProUGUI button3Text;
 
+    [Header("UI Bağlantıları (3 Kartın İkon Resmi)")]
+    public UnityEngine.UI.Image button1Icon;
+    public UnityEngine.UI.Image button2Icon;
+    public UnityEngine.UI.Image button3Icon;
+
+    [Header("Yetenek İkonları (Sprite)")]
+    public Sprite pollenIcon;
+    public Sprite uvLampIcon;
+    public Sprite axeIcon;
+    public Sprite flamethrowerIcon;
+    public Sprite healPotionIcon; // apple.png
+
     [Header("Oyuncu Scriptleri")]
     public PlayerHealth playerHealth;
     public PlayerMovement playerMovement;
@@ -114,6 +126,33 @@ public class UpgradeManager : MonoBehaviour
         if (button1Text != null) button1Text.text = GetUpgradeDescription(currentChoices[0]);
         if (button2Text != null) button2Text.text = GetUpgradeDescription(currentChoices[1]);
         if (button3Text != null) button3Text.text = GetUpgradeDescription(currentChoices[2]);
+
+        if (button1Icon != null) button1Icon.sprite = GetUpgradeIcon(currentChoices[0]);
+        if (button2Icon != null) button2Icon.sprite = GetUpgradeIcon(currentChoices[1]);
+        if (button3Icon != null) button3Icon.sprite = GetUpgradeIcon(currentChoices[2]);
+    }
+
+    Sprite GetUpgradeIcon(UpgradeType type)
+    {
+        switch (type)
+        {
+            case UpgradeType.UnlockPollen:
+            case UpgradeType.UpgradePollen:
+                return pollenIcon;
+            case UpgradeType.UnlockUV:
+            case UpgradeType.UpgradeUV:
+                return uvLampIcon;
+            case UpgradeType.UnlockAxe:
+            case UpgradeType.UpgradeAxe:
+                return axeIcon;
+            case UpgradeType.UnlockFlamethrower:
+            case UpgradeType.UpgradeFlamethrower:
+                return flamethrowerIcon;
+            case UpgradeType.HealPotion:
+                return healPotionIcon;
+            default:
+                return null;
+        }
     }
 
     string GetUpgradeDescription(UpgradeType type)
