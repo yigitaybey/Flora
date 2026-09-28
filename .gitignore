@@ -76,3 +76,18 @@ crashlytics-build.properties
 
 # RevenueCat API Keys (Gizli - Repo'ya pushlama!)
 **/RevenueCatConfig.asset
+
+# Android Signing & Keystores (Gizli İmza Anahtarları)
+*.keystore
+*.jks
+*.p12
+*.pem
+
+# Secret Configs & Credentials
+google-services.json
+GoogleService-Info.plist
+.env
+*.local
+
+# AI Agent & IDE Cache
+.gemini/
