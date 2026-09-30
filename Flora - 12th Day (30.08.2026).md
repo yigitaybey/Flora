@@ -1,0 +1,13 @@
+- Bu gün yapılacaklar:
+	- [x] savaş mapi bugfix ✅ 2026-08-31
+	- [x] Sylva animasyonu değiştirilecek ✅ 2026-08-30
+	- [ ] Işıklandırma bugfix
+	- [ ] Ara map yapılması
+	- [ ] Düşman ve silah assetleri
+		- Polen Gun sekme animasyonu
+		- Düşman animasyonlarını düzelticen
+		- Animasyon hissiyatı düzenlenicek
+	- [ ] FlameThrower Assetini ekle
+	- [ ] FlameThrower Pariküllerini Unity üzerinden yap
+	- [ ] Zaman yeterse terraforming
+Öncelikle Savaş mapi için Bug fix
