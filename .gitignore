@@ -91,3 +91,21 @@ GoogleService-Info.plist
 
 # AI Agent & IDE Cache
 .gemini/
+
+# Local Build Backups & Burst Debug (Don't Ship)
+*[Bb]ack[Uu]p[Tt]his[Ff]older*
+*[Bb]urst[Dd]ebug*
+
+# Local Builds & Release Folders
+[Ff]lora APK ve AAB/
+*.apk
+*.aab
+
+# Local Archive & Investment Folders
+*[Yy]atırım*
+*[Yy]atirim*
+Untitled*
+
+# Generated Icon Exports
+icon_1024x1024.*
+

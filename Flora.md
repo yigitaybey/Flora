@@ -35,6 +35,7 @@ type: folder_brief_live
 - [[Flora - 20th Day (24.09.2026)]]
 - [[Flora - 21th Day (25.09.2026)]]
 - [[Flora - 22th Day (28.09.2026)]]
+- [[Flora - 23th Day (30.09.2026)]]
 - [[Flora_Gunluk_Plan]]
 - [[Flora_Proje_Takvimi]]
 - [[GDD_MutantBitkiler 1]]
