@@ -77,44 +77,44 @@ public class RevenueCatManager : MonoBehaviour
         purchases.Configure(builder.Build());
         purchases.SetLogLevel(Purchases.LogLevel.Debug);
 
-        Debug.Log("✅ RevenueCat SDK Başarıyla Başlatıldı! Key: " + apiKey.Substring(0, 8) + "...");
+        Debug.Log("✅ RevenueCat SDK Initialized! Key: " + apiKey.Substring(0, 8) + "...");
 #else
-        Debug.Log("🧪 RevenueCat Unity Editöründe Çalışmaz. SİMÜLASYON MODU AKTİF (Telefonda gerçek çalışacak)!");
+        Debug.Log("🧪 RevenueCat Editor Mode: SIMULATION ACTIVE (Real SDK runs on mobile build)!");
 #endif
         isSDKReady = true;
     }
 
-    // --- SATIN ALMA FONKSİYONLARI ---
+    // --- PURCHASE METHODS ---
 
     /// <summary>
-    /// Paket 1: Tohum Paketi - 5000 Tohum ($0.99)
+    /// Pack 1: Seed Pack - 5000 Seeds ($0.99)
     /// </summary>
     public void PurchaseSeedPack()
     {
-        Debug.Log("🛒 Tohum Paketi (Simülasyon) başlatılıyor...");
+        Debug.Log("🛒 Seed Pack (Simulation) initiated...");
         GrantSeedPack();
     }
 
     /// <summary>
-    /// Paket 2: Ağaç Dik - 7000 Tohum + 1 Ağaç ($2.99) 🌳
-    /// Peace Prize kategorisi için!
+    /// Pack 2: Plant a Tree - 7000 Seeds + 1 Tree Donation ($2.99) 🌳
+    /// Peace Prize Category Track!
     /// </summary>
     public void PurchasePlantTree()
     {
-        Debug.Log("🌳 Ağaç Dikme Paketi (Simülasyon) başlatılıyor...");
+        Debug.Log("🌳 Plant a Tree Pack (Simulation) initiated...");
         GrantPlantTree();
     }
 
     /// <summary>
-    /// Paket 3: Mega Paket - 10000 Tohum + 2 Ağaç ($4.99) 🌳🌳
+    /// Pack 3: Mega Pack - 10000 Seeds + 2 Trees Donation ($4.99) 🌳🌳
     /// </summary>
     public void PurchaseMegaPack()
     {
-        Debug.Log("🌲🌲 Mega Paket (Simülasyon) başlatılıyor...");
+        Debug.Log("🌲🌲 Mega Reforestation Pack (Simulation) initiated...");
         GrantMegaPack();
     }
 
-    // --- ÖDÜL DAĞITIMI (Satın Alma Başarılı Olunca) ---
+    // --- REWARD DISTRIBUTION ---
 
     void GrantSeedPack()
     {
@@ -122,9 +122,9 @@ public class RevenueCatManager : MonoBehaviour
         {
             GameManager.Instance.AddCoreSeed(5000);
             GameManager.Instance.SaveData();
-            Debug.Log("✅ 5000 Tohum hesaba eklendi!");
+            Debug.Log("✅ 5000 Seeds added to account!");
             
-            // UI güncelle (BaseScene'deyse)
+            // Update UI if in BaseScene
             if (BaseUIManager.Instance != null) BaseUIManager.Instance.UpdateCurrencyUI();
         }
     }
@@ -136,7 +136,7 @@ public class RevenueCatManager : MonoBehaviour
             GameManager.Instance.AddCoreSeed(7000);
             GameManager.Instance.donationTreesCount += 1;
             GameManager.Instance.SaveData();
-            Debug.Log("✅ 7000 Tohum + 1 Ağaç Dikildi! 🌳 Toplam: " + GameManager.Instance.donationTreesCount);
+            Debug.Log("✅ 7000 Seeds + 1 Tree Planted! 🌳 Total: " + GameManager.Instance.donationTreesCount);
 
             if (BaseUIManager.Instance != null) BaseUIManager.Instance.UpdateCurrencyUI();
         }
@@ -149,17 +149,17 @@ public class RevenueCatManager : MonoBehaviour
             GameManager.Instance.AddCoreSeed(10000);
             GameManager.Instance.donationTreesCount += 2;
             GameManager.Instance.SaveData();
-            Debug.Log("✅ 10000 Tohum + 2 Ağaç Dikildi! 🌳🌳 Toplam: " + GameManager.Instance.donationTreesCount);
+            Debug.Log("✅ 10000 Seeds + 2 Trees Planted! 🌳🌳 Total: " + GameManager.Instance.donationTreesCount);
 
             if (BaseUIManager.Instance != null) BaseUIManager.Instance.UpdateCurrencyUI();
         }
     }
 
-    // --- RESTORE PURCHASES (Zorunlu - App Store Red Sebebi Olmaması İçin!) ---
+    // --- RESTORE PURCHASES ---
     public void RestorePurchases()
     {
-        Debug.Log("🔄 Satın almalar geri yükleniyor...");
+        Debug.Log("🔄 Restoring purchases...");
         // Purchases.SharedInstance.RestorePurchases((info, error) => { ... });
-        Debug.Log("✅ Geri yükleme tamamlandı (Simülasyon)");
+        Debug.Log("✅ Purchases restored (Simulation)");
     }
 }

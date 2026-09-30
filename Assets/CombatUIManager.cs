@@ -192,12 +192,12 @@ public class CombatUIManager : MonoBehaviour
     {
         if (AdManager.Instance != null)
         {
-            Debug.Log("Video reklam yükleniyor/gösteriliyor...");
+            Debug.Log("Loading/showing rewarded video ad...");
             AdManager.Instance.ShowRewardedAd();
         }
         else
         {
-            Debug.LogWarning("AdManager bulunamadı, simülasyon olarak ikiye katlanıyor...");
+            Debug.LogWarning("AdManager not found, doubling loot in simulation mode...");
             ApplyDoubleLoot();
         }
     }

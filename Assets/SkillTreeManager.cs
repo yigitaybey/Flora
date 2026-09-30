@@ -160,9 +160,9 @@ public class SkillTreeManager : MonoBehaviour
 
         if (success)
         {
-            Debug.Log($"🎉 {slot.skillName} başarıyla yükseltildi!");
+            Debug.Log($"🎉 {slot.skillName} upgraded successfully!");
             
-            // Tüm ekranı ve sayacı güncelle
+            // Refresh screen and counters
             RefreshAllSlots();
             SelectSkill(selectedSkillIndex);
 
@@ -173,65 +173,65 @@ public class SkillTreeManager : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("Yetersiz tohum veya maksimum seviye!");
+            Debug.LogWarning("Insufficient seeds or maximum level reached!");
         }
     }
 
-    // Yeteneklerin seviye bazlı açıklamaları
+    // Level-based skill descriptions
     string GetSkillDescriptionWithStats(PermanentSkillType type, int currentLevel)
     {
         switch (type)
         {
             case PermanentSkillType.FlameMultishot:
-                if (currentLevel == 0) return "Tüm silahların mermi ve balta sayısını 2 KATINA çıkarır.\nSonraki: 2x Silah Adedi";
-                if (currentLevel == 1) return "Silah adetlerini 3 KATINA çıkarır.\nMevcut: 2x -> Sonraki: 3x Silah";
-                if (currentLevel == 2) return "Silah adetlerini 4 KATINA çıkarır!\nMevcut: 3x -> Sonraki: 4x Çılgın Saldırı!";
-                return "Tüm silahların mermi ve balta sayısı 4 KATINA çıkarıldı! (Maksimum Güç)";
+                if (currentLevel == 0) return "Doubles projectile and axe counts for all weapons.\nNext: 2x Arsenal Count";
+                if (currentLevel == 1) return "Triples projectile and axe counts.\nCurrent: 2x -> Next: 3x Arsenal";
+                if (currentLevel == 2) return "Quadruples projectile and axe counts!\nCurrent: 3x -> Next: 4x Arsenal Frenzy!";
+                return "All weapon counts multiplied by 4X! (Maximum Power)";
 
             case PermanentSkillType.SunshineCurse:
-                if (currentLevel == 0) return "Ormanın Gazabı: Düşmanlar %10 hızlanır, ama tohum ve XP kazancı %25 artar.\nSonraki: +%25 Kazanç / +%10 Hız";
-                if (currentLevel == 1) return "Düşmanlar %20 hızlanır, kazanç %50 artar.\nMevcut: +%25 -> Sonraki: +%50 Kazanç";
-                if (currentLevel == 2) return "Düşmanlar %30 hızlanır, kazanç %75 artar!\nMevcut: +%50 -> Sonraki: +%75 Dev Kazanç!";
-                return "Maksimum Lanet: Düşmanlar %30 hızlı, Tohum ve XP kazancı %75 artırıldı!";
+                if (currentLevel == 0) return "Forest Wrath: Enemies are 10% faster, but seed & XP yield increases by 25%.\nNext: +25% Loot / +10% Speed";
+                if (currentLevel == 1) return "Enemies are 20% faster, loot yield increases by 50%.\nCurrent: +25% -> Next: +50% Loot";
+                if (currentLevel == 2) return "Enemies are 30% faster, loot yield increases by 75%!\nCurrent: +50% -> Next: +75% Mega Loot!";
+                return "Maximum Curse: Enemies 30% faster, Seed & XP earnings boosted by 75%!";
 
             case PermanentSkillType.AppleHealth:
-                if (currentLevel == 0) return "Sylva'nın kök sağlığını güçlendirerek savaşa +25 Maksimum Can ile başlamasını sağlar.";
-                if (currentLevel == 1) return "Maksimum Canı artırır.\nMevcut: +25 HP -> Sonraki: +50 HP";
-                if (currentLevel == 2) return "Maksimum Canı devasa artırır.\nMevcut: +50 HP -> Sonraki: +100 HP";
-                return "Maksimum Kök Sağlığı: Sylva savaşa +100 Ekstra Can ile başlar.";
+                if (currentLevel == 0) return "Fortifies Sylva's root vitality, starting runs with +25 Max HP.";
+                if (currentLevel == 1) return "Increases Maximum Health.\nCurrent: +25 HP -> Next: +50 HP";
+                if (currentLevel == 2) return "Massively increases Maximum Health.\nCurrent: +50 HP -> Next: +100 HP";
+                return "Maximum Root Vitality: Sylva starts combat with +100 Extra HP.";
 
             case PermanentSkillType.MagnetRadius:
-                if (currentLevel == 0) return "Yerdeki tüm XP tohumlarını ve çekirdekleri çekme menzilini %40 artırır.";
-                if (currentLevel == 1) return "Çekim alanını genişletir.\nMevcut: +%40 -> Sonraki: +%80 Alan";
-                if (currentLevel == 2) return "Çekim alanını devasa yapar.\nMevcut: +%80 -> Sonraki: +%120 Alan";
-                return "Maksimum Polen Çekimi: Tohum çekim alanı +%120 artırıldı.";
+                if (currentLevel == 0) return "Increases pickup radius for all XP seeds and cores by 40%.";
+                if (currentLevel == 1) return "Expands magnetic collection radius.\nCurrent: +40% -> Next: +80% Area";
+                if (currentLevel == 2) return "Massively expands magnetic radius.\nCurrent: +80% -> Next: +120% Area";
+                return "Maximum Pollen Attraction: Seed pickup radius expanded by +120%.";
 
             case PermanentSkillType.VitalSeedGain:
-                if (currentLevel == 0) return "Savaş esnasında düşen kalıcı Core Seed (Tohum) miktarını %20 artırır.";
-                if (currentLevel == 1) return "Tohum kazancını artırır.\nMevcut: +%20 -> Sonraki: +%40 Tohum";
-                if (currentLevel == 2) return "Tohum kazancını artırır.\nMevcut: +%40 -> Sonraki: +%60 Tohum";
-                return "Maksimum Bereket: Kalıcı tohum kazancı +%60 artırıldı.";
+                if (currentLevel == 0) return "Increases permanent Core Seed drops from combat by 20%.";
+                if (currentLevel == 1) return "Increases Core Seed drops.\nCurrent: +20% -> Next: +40% Seeds";
+                if (currentLevel == 2) return "Increases Core Seed drops.\nCurrent: +40% -> Next: +60% Seeds";
+                return "Maximum Harvest Bounty: Permanent Core Seed yield increased by +60%.";
 
             case PermanentSkillType.PollenDamage:
-                if (currentLevel == 0) return "Tüm silahların temel vuruş hasarını kalıcı olarak %15 artırır.";
-                if (currentLevel == 1) return "Temel hasarı artırır.\nMevcut: +%15 -> Sonraki: +%30 Hasar";
-                if (currentLevel == 2) return "Temel hasarı artırır.\nMevcut: +%30 -> Sonraki: +%50 Hasar";
-                return "Maksimum Keskinlik: Tüm silahların temel hasarı +%50 artırıldı.";
+                if (currentLevel == 0) return "Permanently increases base strike damage across all weapons by 15%.";
+                if (currentLevel == 1) return "Increases base weapon damage.\nCurrent: +15% -> Next: +30% Damage";
+                if (currentLevel == 2) return "Increases base weapon damage.\nCurrent: +30% -> Next: +50% Damage";
+                return "Maximum Razor Sharpness: All weapon base damage increased by +50%.";
 
             case PermanentSkillType.AxeArmor:
-                if (currentLevel == 0) return "Ağaç Kabuğu: Alınan her darbeden doğrudan 1 Hasar siler.";
-                if (currentLevel == 1) return "Zırhı güçlendirir.\nMevcut: -1 Hasar -> Sonraki: -2 Hasar Engelleme";
-                if (currentLevel == 2) return "Zırhı güçlendirir.\nMevcut: -2 Hasar -> Sonraki: -3 Hasar Engelleme";
-                return "Maksimum Kabuk: Alınan her darbeden 3 Hasar doğrudan silinir.";
+                if (currentLevel == 0) return "Bark Armor: Directly mitigates 1 Damage from every incoming hit.";
+                if (currentLevel == 1) return "Reinforces defensive bark.\nCurrent: -1 Damage -> Next: -2 Damage Absorbed";
+                if (currentLevel == 2) return "Reinforces defensive bark.\nCurrent: -2 Damage -> Next: -3 Damage Absorbed";
+                return "Maximum Bark Shield: Directly negates 3 Damage from every incoming hit.";
 
             case PermanentSkillType.UVSpeed:
-                if (currentLevel == 0) return "Sylva'nın koşu hızını kalıcı olarak %10 artırır.";
-                if (currentLevel == 1) return "Koşu hızını artırır.\nMevcut: +%10 -> Sonraki: +%20 Hız";
-                if (currentLevel == 2) return "Koşu hızını artırır.\nMevcut: +%20 -> Sonraki: +%30 Hız";
-                return "Maksimum Işık Hızı: Sylva %30 daha hızlı koşar.";
+                if (currentLevel == 0) return "Permanently increases Sylva's movement speed by 10%.";
+                if (currentLevel == 1) return "Increases movement speed.\nCurrent: +10% -> Next: +20% Speed";
+                if (currentLevel == 2) return "Increases movement speed.\nCurrent: +20% -> Next: +30% Speed";
+                return "Maximum Photonic Velocity: Sylva sprints 30% faster.";
 
             default:
-                return "Bilinmeyen Yetenek";
+                return "Unknown Skill";
         }
     }
 }

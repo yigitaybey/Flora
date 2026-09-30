@@ -100,45 +100,45 @@ public class BaseUIManager : MonoBehaviour
         }
     }
 
-    // Atölyedeki "Hasar Yükselt" (Örnek) butonuna basınca çalışır
+    // Workshop "Upgrade Damage" button
     public void ClickUpgradeDamage()
     {
         if (GameManager.Instance != null && GameManager.Instance.coreSeedCount >= 10)
         {
             GameManager.Instance.coreSeedCount -= 10;
             UpdateCurrencyUI();
-            Debug.Log("Hasar Yükseltildi!");
+            Debug.Log("Damage Upgraded!");
         }
         else
         {
-            Debug.Log("Yeterli Tohum Yok!");
+            Debug.Log("Not Enough Seeds!");
         }
     }
 
-    // Atölyedeki "Max Can Yükselt" butonuna basınca çalışır
+    // Workshop "Upgrade Max Health" button
     public void ClickUpgradeHealth()
     {
         if (GameManager.Instance != null && GameManager.Instance.coreSeedCount >= 10)
         {
             GameManager.Instance.coreSeedCount -= 10;
             UpdateCurrencyUI();
-            Debug.Log("Max Can Yükseltildi!");
+            Debug.Log("Max Health Upgraded!");
         }
         else
         {
-            Debug.Log("Yeterli Tohum Yok!");
+            Debug.Log("Not Enough Seeds!");
         }
     }
 
-    // Ayarlar butonuna basınca çalışır
+    // Settings Button
     public void OpenSettings()
     {
         CloseAllPanels();
         if (settingsPanel != null) settingsPanel.SetActive(true);
-        Debug.Log("Ayarlar Menüsü Açıldı!");
+        Debug.Log("Settings Menu Opened!");
     }
 
-    // Tohumları sıfırlama butonu
+    // Reset Seeds button
     public void ResetSeedsButton()
     {
         if (GameManager.Instance != null)
@@ -148,7 +148,7 @@ public class BaseUIManager : MonoBehaviour
         }
     }
 
-    // Tüm save datasını fabrika ayarlarına döndürme butonu
+    // Factory Reset Save Data button
     public void ResetAllSaveDataButton()
     {
         if (GameManager.Instance != null)
@@ -158,12 +158,12 @@ public class BaseUIManager : MonoBehaviour
         }
     }
 
-    // Tohumun yanındaki '+' butonuna basınca çalışır (RevenueCat mağazası)
+    // Store button (RevenueCat Reforestation Shop)
     public void OpenStore()
     {
         CloseAllPanels();
         if (storePanel != null) storePanel.SetActive(true);
-        Debug.Log("Ağaç Dikme / Mağaza Menüsü Açıldı! (RevenueCat bağlanacak)");
+        Debug.Log("Reforestation / Store Menu Opened (RevenueCat)!");
     }
 
     // --- REVENUECAT MAĞAZA (Satın Alma Butonları) ---

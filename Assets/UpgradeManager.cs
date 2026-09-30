@@ -159,9 +159,9 @@ public class UpgradeManager : MonoBehaviour
     {
         switch (type)
         {
-            // YEDEK / TEKRARLANABİLİR
+            // REPEATABLE / EMERGENCY
             case UpgradeType.HealPotion:
-                return "🧪 Acil Durum İksiri:\n+30 HP Canlandır";
+                return "🧪 Emergency Tonic:\n+30 HP Restored";
 
 
             // POLLEN
@@ -176,12 +176,12 @@ public class UpgradeManager : MonoBehaviour
                     case 5: return "Pollen (Lvl 5): Projectile Speed & Range +20%";
                     case 6: return "Pollen (Lvl 6): Damage +25% | SYNERGY: Max HP +20";
                     case 7: return "Pollen (Lvl 7): Fire Rate +25%";
-                    case 8: return "⚡ EVRİM: ÇİÇEK GATLING'İ!\n5 Delici Mermi & Seri Tarama";
+                    case 8: return "⚡ EVOLUTION: FLOWER GATLING!\n5 Piercing Bullets & Rapid Barrage";
                     default: return "Pollen Upgraded";
                 }
 
             // UV LAMP
-            case UpgradeType.UnlockUV: return "YENİ SİLAH: UV Lambası (Lvl 1)";
+            case UpgradeType.UnlockUV: return "NEW WEAPON: UV Lamp (Lvl 1)";
             case UpgradeType.UpgradeUV:
                 int nextUVLevel = uvWeapon.currentLevel + 1;
                 switch (nextUVLevel)
@@ -192,12 +192,12 @@ public class UpgradeManager : MonoBehaviour
                     case 5: return "UV Lamp (Lvl 5): Area Damage +30%";
                     case 6: return "UV Lamp (Lvl 6): Aura Radius +20% | SYNERGY: +1.0 HP Regen";
                     case 7: return "UV Lamp (Lvl 7): Rapid Pulse Frequency";
-                    case 8: return "⚡ EVRİM: SÜPERNOVA!\nDevasa Şok Dalgası & %40 Yavaşlatma";
+                    case 8: return "⚡ EVOLUTION: SUPERNOVA!\nMassive Shockwave & 40% Slow";
                     default: return "UV Lamp Upgraded";
                 }
 
             // AXE
-            case UpgradeType.UnlockAxe: return "YENİ SİLAH: Dönen Balta (Lvl 1)";
+            case UpgradeType.UnlockAxe: return "NEW WEAPON: Orbiting Axe (Lvl 1)";
             case UpgradeType.UpgradeAxe:
                 int nextAxeLevel = axeWeapon.currentLevel + 1;
                 switch (nextAxeLevel)
@@ -208,12 +208,12 @@ public class UpgradeManager : MonoBehaviour
                     case 5: return "Axe (Lvl 5): Axe Size +25%";
                     case 6: return "Axe (Lvl 6): Axe Damage +30% | SYNERGY: Move Speed +10%";
                     case 7: return "Axe (Lvl 7): Orbit Speed +30%";
-                    case 8: return "⚡ EVRİM: TESTERE KALKANI!\n4 Dev Balta ile Geçilmez Kalkan";
+                    case 8: return "⚡ EVOLUTION: SAW SHIELD!\n4 Giant Axes Impenetrable Shield";
                     default: return "Axe Upgraded";
                 }
 
             // FLAMETHROWER
-            case UpgradeType.UnlockFlamethrower: return "YENİ SİLAH: Alev Püskürtücü (Lvl 1)";
+            case UpgradeType.UnlockFlamethrower: return "NEW WEAPON: Flamethrower (Lvl 1)";
             case UpgradeType.UpgradeFlamethrower:
                 int nextFlameLevel = flamethrowerWeapon.currentLevel + 1;
                 switch (nextFlameLevel)
@@ -224,7 +224,7 @@ public class UpgradeManager : MonoBehaviour
                     case 5: return "Flame (Lvl 5): Flame Cone +30%";
                     case 6: return "Flame (Lvl 6): Cooldown -30% | SYNERGY: All Damage +10%";
                     case 7: return "Flame (Lvl 7): Flame Damage +35%";
-                    case 8: return "⚡ EVRİM: LAV TARLASI!\nYerde Sönmeyen Alev Göletleri";
+                    case 8: return "⚡ EVOLUTION: LAVA FIELD!\nPersistent Burning Magma Pools";
                     default: return "Flame Upgraded";
                 }
 

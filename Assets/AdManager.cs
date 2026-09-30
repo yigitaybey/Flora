@@ -122,17 +122,17 @@ public class AdManager : MonoBehaviour, IUnityAdsInitializationListener, IUnityA
             if (CombatUIManager.Instance != null)
             {
                 CombatUIManager.Instance.ApplyDoubleLoot();
-                Debug.Log("✅ Reklam izlendi, Tohumlar ikiye katlandı!");
+                Debug.Log("✅ Rewarded ad watched: Seeds doubled!");
             }
             else if (GameManager.Instance != null)
             {
-                GameManager.Instance.AddCoreSeed(500); // Hackathon simülasyonu fallback
-                Debug.Log("✅ Reklam izlendi, 500 Bonus Tohum verildi!");
+                GameManager.Instance.AddCoreSeed(500); // Hackathon simulation fallback
+                Debug.Log("✅ Rewarded ad watched: 500 Bonus Seeds granted!");
             }
                 
             // Track with RevenueCat AdTracker
             try {
-                    // Simüle edilmiş bir revenue ataması
+                    // Simulated revenue impression
                     var adInfo = new AdRevenueData(
                         mediatorName: new AdTracker.MediatorName("UnityAds"),
                         adFormat: AdTracker.Format.Rewarded,
@@ -147,9 +147,9 @@ public class AdManager : MonoBehaviour, IUnityAdsInitializationListener, IUnityA
                     {
                         purchases.AdTracker.TrackAdRevenue(adInfo);
                     }
-                    Debug.Log("✅ RevenueCat AdTracker'a reklam impression'u başarıyla gönderildi (Catvertising)!");
+                    Debug.Log("✅ Ad impression successfully tracked to RevenueCat AdTracker (Catvertising)!");
                 } catch (System.Exception e) {
-                    Debug.Log("RevenueCat Ad Tracking çalışmadı (Belki SDK başlatılmamıştır): " + e.Message);
+                    Debug.Log("RevenueCat Ad Tracking telemetry warning: " + e.Message);
                 }
         }
     }
